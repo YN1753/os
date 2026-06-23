@@ -940,17 +940,23 @@ PC() {
                 div.className = "p-4 rounded-xl border border-slate-100 hover:bg-slate-50/50 transition";
                 
                 let blankFields = '';
+                const blankCount = (q.text.match(/______/g) || []).length;
                 if(sectionModes.blanks === 'browse') {
-                    blankFields = q.ans.map(a => `<span class="mx-1 px-2.5 py-0.5 bg-emerald-50 border border-emerald-200 text-emerald-700 font-bold rounded-md font-mono text-xs">${a}</span>`).join('、');
+                    if(blankCount <= 1 && q.ans.length > 1) {
+                        blankFields = `<span class="mx-1 px-2.5 py-0.5 bg-emerald-50 border border-emerald-200 text-emerald-700 font-bold rounded-md font-mono text-xs">${q.ans.join(' / ')}</span>`;
+                    } else {
+                        blankFields = q.ans.map(a => `<span class="mx-1 px-2.5 py-0.5 bg-emerald-50 border border-emerald-200 text-emerald-700 font-bold rounded-md font-mono text-xs">${a}</span>`).join('、');
+                    }
                 } else {
-                    blankFields = q.ans.map((a, aIdx) => `
-                        <input type="text" id="blank-ans-${q.id}-${aIdx}" class="blank-input border-b border-slate-300 w-28 text-center text-xs py-0.5 mx-1 focus:border-emerald-500 focus:outline-none" placeholder="填空">
+                    const inputCount = Math.max(blankCount, 1);
+                    blankFields = Array.from({length: inputCount}, (_, aIdx) => `
+                        <input type="text" id="blank-ans-${q.id}-${aIdx}" class="blank-input border-b border-slate-300 w-28 text-center text-xs py-0.5 mx-1 focus:border-emerald-500 focus:outline-none">
                     `).join('、');
                 }
 
                 div.innerHTML = `
                     <div class="text-sm font-semibold text-slate-800 leading-relaxed">
-                        <span class="text-slate-400 font-mono mr-2">${idx + 1}.</span>${q.text.replace(/______/g, ' [空] ')}
+                        <span class="text-slate-400 font-mono mr-2">${idx + 1}.</span>${q.text}
                         <div class="inline-flex flex-wrap items-center mt-2 pl-6 gap-1">
                             <span class="text-xs text-slate-400">您的答案：</span>${blankFields}
                             <span id="blank-feedback-${q.id}" class="ml-2 text-xs font-bold inline-block"></span>
@@ -1143,26 +1149,60 @@ PC() {
             } else if(sectionId === 'blanks') {
                 let corrects = 0, totals = 0;
                 blanksData.forEach(q => {
-                    let qCorrect = true;
-                    q.ans.forEach((a, aIdx) => {
-                        totals++;
-                        const input = document.getElementById(`blank-ans-${q.id}-${aIdx}`);
-                        if(!input) return;
+                    const blankCount = (q.text.match(/______/g) || []).length;
+                    const inputs = [];
+                    for(let i = 0; i < q.ans.length; i++) {
+                        const input = document.getElementById(`blank-ans-${q.id}-${i}`);
+                        if(input) inputs.push({ input, val: input.value.trim() });
+                    }
 
-                        const val = input.value.trim();
-                        // 模糊拼写比对 (去掉空格，进行包含或相近验证)
-                        if(val === a || a.split('、').includes(val) || (val.length > 0 && a.replace(/\s+/g, '').includes(val.replace(/\s+/g, '')))) {
-                            corrects++;
-                            input.className = "blank-input border-2 border-emerald-500 w-28 text-center text-xs py-0.5 mx-1 bg-emerald-50 text-emerald-900 rounded-md";
-                        } else {
-                            qCorrect = false;
-                            input.className = "blank-input border-2 border-red-500 w-28 text-center text-xs py-0.5 mx-1 bg-red-50 text-red-900 rounded-md";
+                    if(blankCount <= 1) {
+                        // 单空多答案：任一匹配即正确
+                        totals++;
+                        const val = inputs.length > 0 ? inputs[0].val : '';
+                        const matched = q.ans.some(a => val.toLowerCase() === a.toLowerCase() || (val.length > 0 && a.replace(/\s+/g,'').toLowerCase().includes(val.replace(/\s+/g,'').toLowerCase())));
+                        if(inputs.length > 0) {
+                            inputs[0].input.className = matched
+                                ? "blank-input border-2 border-emerald-500 w-28 text-center text-xs py-0.5 mx-1 bg-emerald-50 text-emerald-900 rounded-md"
+                                : "blank-input border-2 border-red-500 w-28 text-center text-xs py-0.5 mx-1 bg-red-50 text-red-900 rounded-md";
                         }
-                    });
+                        if(matched) corrects++;
+                    } else {
+                        // 多空：顺序无关，贪心匹配
+                        const matched = new Array(q.ans.length).fill(false);
+                        const used = new Array(inputs.length).fill(false);
+                        inputs.forEach((inp, ui) => {
+                            if(inp.val === '') return;
+                            for(let ai = 0; ai < q.ans.length; ai++) {
+                                if(matched[ai]) continue;
+                                const a = q.ans[ai];
+                                if(inp.val.toLowerCase() === a.toLowerCase() || a.replace(/\s+/g,'').toLowerCase().includes(inp.val.replace(/\s+/g,'').toLowerCase())) {
+                                    matched[ai] = true;
+                                    used[ui] = true;
+                                    break;
+                                }
+                            }
+                        });
+                        inputs.forEach((inp, ui) => {
+                            totals++;
+                            inp.input.className = used[ui]
+                                ? "blank-input border-2 border-emerald-500 w-28 text-center text-xs py-0.5 mx-1 bg-emerald-50 text-emerald-900 rounded-md"
+                                : "blank-input border-2 border-red-500 w-28 text-center text-xs py-0.5 mx-1 bg-red-50 text-red-900 rounded-md";
+                            if(used[ui]) corrects++;
+                        });
+                    }
 
                     const feedback = document.getElementById(`blank-feedback-${q.id}`);
                     if(feedback) {
-                        if(qCorrect) {
+                        const allCorrect = blankCount <= 1
+                            ? (inputs.length > 0 && q.ans.some(a => inputs[0].val.toLowerCase() === a.toLowerCase()))
+                            : inputs.every((inp, ui) => {
+                                for(let ai = 0; ai < q.ans.length; ai++) {
+                                    if(inp.val.toLowerCase() === q.ans[ai].toLowerCase()) return true;
+                                }
+                                return false;
+                              });
+                        if(allCorrect && inputs.length > 0 && inputs.every(i => i.val !== '')) {
                             feedback.innerHTML = "✅ 正确";
                             feedback.className = "ml-2 text-xs font-bold text-emerald-600";
                         } else {
