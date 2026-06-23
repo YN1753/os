@@ -1,0 +1,1292 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="h-full bg-slate-50 text-slate-900">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>操作系统期末复习题集 - 四川轻化工大学 24级计算机</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        suse: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            500: '#10b981',
+                            600: '#059669',
+                            700: '#047857',
+                            900: '#064e3b',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+        .font-mono {
+            font-family: 'Fira Code', monospace;
+        }
+        /* 自测模式核心输入框样式，确保绝不泄露答案 */
+        .practice-input {
+            border: 1px solid #cbd5e1;
+            background-color: #ffffff;
+            border-radius: 0.375rem;
+            padding: 0.25rem 0.5rem;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+        .practice-input:focus {
+            border-color: #10b981;
+            box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.15);
+        }
+        .no-select {
+            user-select: none;
+        }
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            body {
+                background-color: #ffffff !important;
+                color: #000000 !important;
+            }
+        }
+    </style>
+</head>
+<body class="h-full flex flex-col bg-slate-50">
+
+    <!-- 顶栏 -->
+    <header class="bg-gradient-to-r from-slate-900 to-slate-950 text-white py-5 px-6 sticky top-0 z-50 shadow-md no-print">
+        <div class="max-w-7xl mx-auto flex flex-col lg:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-4">
+                <div class="bg-emerald-500 text-slate-950 px-3 py-1.5 rounded-lg font-black tracking-wider text-sm shadow-md">SUSE</div>
+                <div>
+                    <h1 class="text-xl font-bold tracking-tight text-emerald-400">操作系统期末冲刺全套复习题集</h1>
+                    <p class="text-xs text-slate-400 mt-0.5">四川轻化工大学 · 24级计算机专业专属规范自测排版版（五大分类题型版）</p>
+                </div>
+            </div>
+            
+            <!-- 工具控制区 -->
+            <div class="flex flex-wrap items-center gap-3">
+                <div class="bg-slate-800 px-3 py-1.5 rounded-xl border border-slate-700 text-xs flex items-center gap-4">
+                    <span class="text-slate-400">复习模式:</span>
+                    <div class="flex gap-2">
+                        <button onclick="setMode('browse')" id="mode-browse-btn" class="px-2.5 py-1 rounded-md font-bold transition text-slate-400 hover:text-white">📖 背诵模式</button>
+                        <button onclick="setMode('test')" id="mode-test-btn" class="px-2.5 py-1 rounded-md font-bold transition bg-slate-700 text-white">📝 自测模式</button>
+                    </div>
+                </div>
+                <button onclick="submitAllAnswers()" class="bg-emerald-500 hover:bg-emerald-600 text-slate-950 px-4 py-2 rounded-xl text-xs font-bold shadow-md transition">
+                    ✔️ 提交整卷自测
+                </button>
+                <button onclick="window.print()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-4 py-2 rounded-xl text-xs font-bold transition">
+                    🖨️ 打印 PDF
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- 侧边栏与主内容布局 -->
+    <div class="flex-grow max-w-7xl w-full mx-auto flex flex-col lg:flex-row gap-6 p-4 md:p-6">
+        
+        <!-- 侧边快捷导航与看板 (no-print) -->
+        <aside class="w-full lg:w-64 shrink-0 space-y-4 no-print lg:sticky lg:top-24 h-fit">
+            <!-- 答卷状态面板 -->
+            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+                <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">📊 当前自测看板</h3>
+                <div class="grid grid-cols-2 gap-2 text-center">
+                    <div class="bg-slate-50 p-2 rounded-xl border">
+                        <div class="text-[10px] text-slate-400">已答题</div>
+                        <div id="stat-answered" class="text-lg font-bold text-slate-800">0/150</div>
+                    </div>
+                    <div class="bg-slate-50 p-2 rounded-xl border">
+                        <div class="text-[10px] text-slate-400">正确率</div>
+                        <div id="stat-accuracy" class="text-lg font-bold text-emerald-600">0%</div>
+                    </div>
+                </div>
+                <div class="text-xs text-slate-500 text-center leading-relaxed">
+                    在<strong>自测模式</strong>下输入您的答案，点击各章节底部的按钮即可核对。
+                </div>
+            </div>
+
+            <!-- 五大分类快速导航 -->
+            <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-2">
+                <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400 px-2 mb-3">分类题型导航</h2>
+                <a href="#sec-choices" class="flex items-center gap-2 text-sm text-slate-700 hover:text-emerald-600 px-3 py-2.5 rounded-xl hover:bg-slate-50 font-medium transition">
+                    💡 一、选择题专区 (Choice)
+                </a>
+                <a href="#sec-blanks" class="flex items-center gap-2 text-sm text-slate-700 hover:text-emerald-600 px-3 py-2.5 rounded-xl hover:bg-slate-50 font-medium transition">
+                    ✍️ 二、填空题专区 (Blank)
+                </a>
+                <a href="#sec-programs" class="flex items-center gap-2 text-sm text-slate-700 hover:text-emerald-600 px-3 py-2.5 rounded-xl hover:bg-slate-50 font-medium transition">
+                    ⚙️ 三、程序题专区 (PV Sync)
+                </a>
+                <a href="#sec-questions" class="flex items-center gap-2 text-sm text-slate-700 hover:text-emerald-600 px-3 py-2.5 rounded-xl hover:bg-slate-50 font-medium transition">
+                    📈 四、问答题专区 (Math/Analysis)
+                </a>
+                <a href="#sec-essays" class="flex items-center gap-2 text-sm text-slate-700 hover:text-emerald-600 px-3 py-2.5 rounded-xl hover:bg-slate-50 font-medium transition">
+                    💬 五、简答题专区 (Short Answer)
+                </a>
+            </div>
+        </aside>
+
+        <!-- 右侧试卷主内容 -->
+        <article class="flex-grow min-w-0 bg-white p-6 md:p-8 rounded-3xl border border-slate-200 shadow-sm space-y-12">
+            
+            <!-- 1. 选择题专区 -->
+            <section id="sec-choices" class="space-y-6">
+                <div class="border-b border-slate-100 pb-4">
+                    <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+                        <span class="text-emerald-500">一、</span>单项选择题专区
+                    </h2>
+                    <p class="text-xs text-slate-500 mt-1">共有 78 道操作系统核心概念单项选择题，答案已全部严密核对。</p>
+                </div>
+                <div id="choices-box" class="space-y-6">
+                    <!-- JS 渲染选择题 -->
+                </div>
+                <div class="pt-4 border-t border-slate-100 flex justify-end no-print">
+                    <button onclick="gradeSection('choices')" class="bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 px-6 rounded-xl text-sm transition">
+                        提交本节选择题并核对
+                    </button>
+                </div>
+            </section>
+
+            <!-- 2. 填空题专区 -->
+            <section id="sec-blanks" class="space-y-6">
+                <div class="border-b border-slate-100 pb-4">
+                    <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+                        <span class="text-emerald-500">二、</span>填空题专区
+                    </h2>
+                    <p class="text-xs text-slate-500 mt-1">共有 20 组文字基础性填空题。在填空框中输入您认为正确的专业术语进行测试。</p>
+                </div>
+                <div id="blanks-box" class="space-y-6">
+                    <!-- JS 渲染填空题 -->
+                </div>
+                <div class="pt-4 border-t border-slate-100 flex justify-end no-print">
+                    <button onclick="gradeSection('blanks')" class="bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 px-6 rounded-xl text-sm transition">
+                        提交本节填空题并核对
+                    </button>
+                </div>
+            </section>
+
+            <!-- 3. 程序题专区 -->
+            <section id="sec-programs" class="space-y-6">
+                <div class="border-b border-slate-100 pb-4">
+                    <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+                        <span class="text-emerald-500">三、</span>程序题专区 (经典 PV 互斥同步伪代码)
+                    </h2>
+                    <p class="text-xs text-slate-500 mt-1">包含期末原卷中 7 大经典的 PV 同步控制伪代码大题。通过输入 1~8 的原语代号来进行自测。</p>
+                </div>
+                <div id="programs-box" class="space-y-8">
+                    <!-- JS 渲染程序题 -->
+                </div>
+                <div class="pt-4 border-t border-slate-100 flex justify-end no-print">
+                    <button onclick="gradeSection('programs')" class="bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 px-6 rounded-xl text-sm transition">
+                        提交本节程序题并核对
+                    </button>
+                </div>
+            </section>
+
+            <!-- 4. 问答题专区 -->
+            <section id="sec-questions" class="space-y-6">
+                <div class="border-b border-slate-100 pb-4">
+                    <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+                        <span class="text-emerald-500">四、</span>问答题专区 (核心算法深度分析与计算)
+                    </h2>
+                    <p class="text-xs text-slate-500 mt-1">汇聚进程调度甘特图、银行家安全算法、虚实地址映射、置换算法序列、磁盘磁头移动等所有综合计算大题。原卷中缺失答案的大题，皆已由 AI 精密计算并做标注。</p>
+                </div>
+                <div id="questions-box" class="space-y-10">
+                    <!-- JS 渲染问答计算题 -->
+                </div>
+                <div class="pt-4 border-t border-slate-100 flex justify-end no-print">
+                    <button onclick="gradeSection('questions')" class="bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 px-6 rounded-xl text-sm transition">
+                        提交本节问答题并核对
+                    </button>
+                </div>
+            </section>
+
+            <!-- 5. 简答题专区 -->
+            <section id="sec-essays" class="space-y-6">
+                <div class="border-b border-slate-100 pb-4">
+                    <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+                        <span class="text-emerald-500">五、</span>简答题专区 (经典简答大纲背诵)
+                    </h2>
+                    <p class="text-xs text-slate-500 mt-1">10 道期末必背经典简答题。自测模式下可在文本框写下草稿，点击按钮核对采分点大纲进行自我评估。</p>
+                </div>
+                <div id="essays-box" class="space-y-6">
+                    <!-- JS 渲染简答题 -->
+                </div>
+                <div class="pt-4 border-t border-slate-100 flex justify-end no-print">
+                    <button onclick="gradeSection('essays')" class="bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 px-6 rounded-xl text-sm transition">
+                        核对简答题标准采分大纲
+                    </button>
+                </div>
+            </section>
+
+        </article>
+    </div>
+
+    <!-- 页脚 -->
+    <footer class="bg-slate-900 text-slate-500 py-8 px-6 text-center text-xs border-t border-slate-950">
+        <div class="max-w-7xl mx-auto space-y-2">
+            <p>四川轻化工大学 · 24级计算机专业 操作系统期末自测试卷及答案精排版</p>
+            <p class="text-[10px] text-slate-600">五大题型分类版（选择、填空、程序、问答、简答） · 双态切换及打印排版已自动启用</p>
+        </div>
+    </footer>
+
+    <!-- 核心数据库与渲染引擎 -->
+    <script>
+        // 1. 选择题数据 (Choices)
+        const choicesData = [
+            { id: 1, text: "在设计批处理操作系统系统时，首先要考虑的是什么？", options: ["A. 灵活性和可适应性", "B. 周转时间和系统吞吐量", "C. 交互性和响应时间", "D. 实时性和可靠性"], ans: "B" },
+            { id: 2, text: "分时系统的产生是基于哪项需要？", options: ["A. 提高网络性能", "B. 人机交互", "C. 提高系统吞吐量", "D. 系统能及时响应外部事件的请求，在规定时间内完成"], ans: "B" },
+            { id: 3, text: "操作系统提供给程序员的接口是：", options: ["A. 系统调用", "B. 进程", "C. 库函数", "D. 机器指令"], ans: "A" },
+            { id: 4, text: "在设计分时操作系统系统时，首先要考虑的是：", options: ["A. 实时性和可靠性", "B. 周转时间和系统吞吐量", "C. 交互性和响应时间", "D. 灵活性和可适应性"], ans: "C" },
+            { id: 5, text: "以下哪个不是多道批处理系统的特点？", options: ["A. 周转时间短", "B. 系统吞吐量大", "C. 资源利用率高", "D. 交互不方便"], ans: "A" },
+            { id: 6, text: "下列选择中，哪个不是操作系统关心的主要问题？", options: ["A. 设计、提供用户程序与计算机硬件系统的界面", "B. 管理计算机系统资源", "C. 管理计算机裸机", "D. 高级程序设计语言的编译器"], ans: "D" },
+            { id: 7, text: "为了进行进程协调，进程之间应当具有一定的联系，这种联系通常采用进程间交换数据的方式进行，这种方式称为：", options: ["A. 进程互斥", "B. 进程同步", "C. 进程通信", "D. 进程制约"], ans: "C" },
+            { id: 8, text: "操作系统是对以下哪项进行管理的软件？", options: ["A. 硬件", "B. 软件", "C. 计算机资源", "D. 应用程序"], ans: "C" },
+            { id: 9, text: "以下哪个不是常见操作系统的结构？", options: ["A. 前后端模型", "B. 层次模型", "C. 客户-服务器模型", "D. 单体系统"], ans: "A" },
+            { id: 10, text: "多道操作系统会带来一些问题，哪个不是多道系统要考虑的问题？", options: ["A. CPU速度的提高", "B. 协同工作", "C. 处理器的分配", "D. 资源的竞争"], ans: "A" },
+            { id: 12, text: "并发和并行的说法正确的是：", options: ["A. 并发是指同一物理时间上运行多个程序", "B. 单核处理器上无法实现并行，只能并发", "C. 多核CPU上的程序在微观上一定是并行运行的", "D. 并发并行在宏观和微观上都是一个概念"], ans: "B" },
+            { id: 13, text: "下列进程状态变化中，哪种变化是可能发生的？", options: ["A. 运行 -> 静止就绪", "B. 活动就绪 -> 活动阻塞", "C. 静止就绪 -> 运行", "D. 静止就绪 -> 静止阻塞"], ans: "A" },
+            { id: 14, text: "导致进程从执行变为就绪状态的事件是：", options: ["A. 启动IO设备", "B. CPU被强占", "C. 等待输入", "D. 其他选项都可以"], ans: "B" },
+            { id: 15, text: "下列进程状态变化中，哪种变化是不可能发生的？", options: ["A. 运行 -> 静止就绪", "B. 静止阻塞 -> 活动阻塞", "C. 活动阻塞 -> 活动就绪", "D. 活动就绪 -> 活动阻塞"], ans: "D" },
+            { id: 16, text: "一个进程被唤醒意味着：", options: ["A. 进程变为活动就绪状态", "B. 该进程重新占有了CPU", "C. 它的优先权变为最大", "D. 其PCB移至等待队列队首"], ans: "A" },
+            { id: 17, text: "下列进程状态变化中，哪种状态变化是不可能发生的？", options: ["A. 静止阻塞 -> 活动阻塞", "B. 运行 -> 静止就绪", "C. 静止就绪 -> 运行", "D. 活动阻塞 -> 活动就绪"], ans: "C" },
+            { id: 18, text: "当发生以下哪种事件时，进程从执行状态转变为就绪状态？", options: ["A. 等待事件发生", "B. 时间片到", "C. 被调度", "D. 其他选项都可以"], ans: "B" },
+            { id: 19, text: "对进程被挂起时的状态描述正确的是：", options: ["A. 进程暂时不能被调度", "B. 进程被用户暂停", "C. 进程处于活动就绪队列", "D. 进程缺少某种资源"], ans: "A" },
+            { id: 20, text: "进程和程序的根本区别在于：", options: ["A. 是不是具有就绪运行和等待三种状态", "B. 是不是占有处理器", "C. 是不是被调入内存", "D. 进程是动态的过程，而程序是静态的代码集合（本题D选项根据原题干语义进行了规范化）"], ans: "D" },
+            { id: 21, text: "并发进程在时间上的特点是：", options: ["A. 同时执行", "B. 在临界区内部同时运行", "C. 在执行的时间上是重叠的", "D. 在临界区外部同时执行"], ans: "C" },
+            { id: 22, text: "在操作系统中，进程是一个具有一定独立功能的程序在某个数据集上的一次：", options: ["A. 运行活动", "B. 关联操作", "C. 等待活动", "D. 执行，但不包括停止状态"], ans: "A" },
+            { id: 23, text: "进程创建原语的任务是：", options: ["A. 为进程编制程序", "B. 为进程建立PCB表", "C. 为进程分配CPU", "D. 为进程分配所需的各种资源"], ans: "B" },
+            { id: 24, text: "下述哪一个选项体现了原语的主要特点？", options: ["A. 不可分割", "B. 并发", "C. 共享", "D. 异步"], ans: "A" },
+            { id: 25, text: "临界区是：", options: ["A. 一段共享数据区", "B. 一段访问临界资源的程序代码", "C. 一个缓冲区", "D. 一个互斥资源"], ans: "B" },
+            { id: 26, text: "信号和信号量说法错误的是：", options: ["A. 信号量是信号的量化，是一种可以测量的信号", "B. 都是进程通信方式", "C. 信号和信号量传输的信息量都很小", "D. 信号量通常用在同步机制中"], ans: "A" },
+            { id: 27, text: "若信号量 S 的初值为 3，当前值为 -1，则表示有几个等待进程？", options: ["A. 1", "B. 2", "C. 3", "D. 4"], ans: "A" },
+            { id: 28, text: "设与某资源相关联的信号量初值为 5，当前值为 2，若 M 表示该资源的可用个数，N 表示等待资源的进程数，则 M,N 分别是：", options: ["A. 3, 2", "B. 2, 0", "C. 3, 3", "D. 5, 3"], ans: "B" },
+            { id: 29, text: "在操作系统中，wait()、signal() 操作是一种：", options: ["A. 机器指令", "B. 系统调用", "C. 低级进程通信原语", "D. 内核指令"], ans: "C" },
+            { id: 30, text: "两个并发进程，共享一个互斥信号量 A，如果 A = 0，则表示：", options: ["A. 有一个进程进入临界区", "B. 有一个进入临界区，一个在等待", "C. 有一个进程在等待", "D. 没有程序进入临界区"], ans: "A" },
+            { id: 31, text: "PV操作是对哪个进行操作？", options: ["A. 原语", "B. 信号量", "C. 执行速度", "D. 执行时间"], ans: "B" },
+            { id: 32, text: "如果 4 个进程共享一个程序段，每次最多允许 3 个进程进入，用 PV 操作做同步，那么信号量的取值范围是：", options: ["A. 3, 2, 1, 0, -1, -2, -3", "B. 2, 1, 0, -1, -2", "C. 4, 3, 2, 1, 0, -1", "D. 3, 2, 1, 0, -1"], ans: "D" },
+            { id: 33, text: "既考虑作业等待时间，又考虑作业执行时间的调度算法是：", options: ["A. 响应比高者优先（高响应比优先 HRRN）", "B. 短作业优先", "C. 优先级调度", "D. 先来先服务"], ans: "A" },
+            { id: 34, text: "有两个并行执行的进程 P1 和 P2，共享初值为 3 的变量 x。P1 进程中要执行对 x 加 1（语句为：t=x; t=t+1; x=t），P2 中要执行对 x 减 1（语句为：t=x; t=t-1; x=t）。两个操作完成后，x 的值：", options: ["A. 不可能为 1 或 4", "B. 可能为 2、3 或 4", "C. 只能为 3", "D. 可能为 1、2、3 或 4"], ans: "B" },
+            { id: 35, text: "分区管理中采用“最佳适应”分配算法时，宜把空闲区按什么次序登记在空闲区表中？", options: ["A. 大小递增", "B. 大小递减", "C. 地址递增", "D. 地址递减"], ans: "A" },
+            { id: 36, text: "由于并发进程之间什么特性不能由进程本身控制，他们在共享某些资源时会产生和时间有关的错误？", options: ["A. 执行的相对速度", "B. 占用存储器的位置", "C. 对 IO 设备的使用", "D. 分配内存空间"], ans: "A" },
+            { id: 37, text: "在页式管理中，页表的始址存放在：", options: ["A. 内存", "B. 存储页面中", "C. 联想存储器", "D. 寄存器中"], ans: "D" },
+            { id: 38, text: "下面有关进程同步互斥的概念说法错误的是：", options: ["A. 同步和互斥都涉及到并发进程共享资源的访问问题", "B. 互斥是同步的特殊情况，互斥是竞争共享资源，而同步是进程间有依赖关系", "C. 进程同步是互斥的一种特殊情况", "D. 同一个进程的两个线程不一定需要同步"], ans: "C" },
+            { id: 39, text: "如果系统有 2 个处理机，有 n 个用户进程，则就绪队列中用户进程的个数最多为：", options: ["A. n-1", "B. n-2", "C. 1", "D. n"], ans: "B" },
+            { id: 40, text: "设系统中有 n(n > 2) 个用户进程，则以下情况中，不可能发生的情况是哪一种？", options: ["A. 有 1 个运行进程，n-1 个就绪进程，没有进程处于等待状态", "B. 有 1 个运行进程，有 1 个就绪进程，n-2 个进程处于等待状态", "C. 有 1 个运行进程，没有就绪进程，n-1 个进程处于等待状态", "D. 没有运行进程，有 2 个就绪进程，n 个进程处于等待状态"], ans: "D" },
+            { id: 41, text: "下面所述步骤中，通常情况，哪个不是创建进程所必需的？", options: ["A. 由调度程序为进程分配 CPU", "B. 建立一个 PCB", "C. 为进程分配内存", "D. 加入就绪队列"], ans: "A" },
+            { id: 42, text: "PCB 是进程存在的唯一标志，下列不属于 PCB 内容的是哪一项？", options: ["A. CPU 控制寄存器内容", "B. 全局变量", "C. 栈指针", "D. 进程优先级"], ans: "B" },
+            { id: 43, text: "在单 CPU 上使用 WPS 字处理软件编辑一篇文章的时候，用户在点击保存文件的时候，还可以继续输入，对运行的这个程序理解正确的是：", options: ["A. 一个进程的 2 个线程，一个线程阻塞的时候切换到另一个线程执行", "B. 两个进程，一个进程负责存盘，一个负责输入", "C. 只有一个进程，利用输入的间歇保存，分时使用一个 CPU", "D. 一个进程的两个线程，两个线程并行的执行"], ans: "A" },
+            { id: 44, text: "文件系统采用二级文件目录，主要是为了：", options: ["A. 缩短访问存储器的时间", "B. 实现文件共享", "C. 节省内存空间", "D. 解决不同用户之间文件名冲突"], ans: "D" },
+            { id: 52, text: "CPU 对通道的请求形式是：", options: ["A. 自陷", "B. 中断", "C. 通道命令", "D. 转移指令"], ans: "C" },
+            { id: 53, text: "有关进程的描述中，哪项是正确的？", options: ["A. 进程执行的相对速度不能由进程自己来控制", "B. 利用信号量的 P, V 操作可以交换大量信息", "C. 同步是指并发进程之间相互控制的关系", "D. 并发进程在访问共享资源时，不可能出现与时间有关的错误"], ans: "A" },
+            { id: 54, text: "处理机调度通常分几级？", options: ["A. 3", "B. 2", "C. 1", "D. 4"], ans: "A" },
+            { id: 55, text: "进程调度的任务主要有：", options: ["A. 把处理器分配给新进程", "B. 按某种调度算法选取投入执行新进程", "C. 保存当前进程的处理机现场", "D. 这里提到的三个都是"], ans: "D" },
+            { id: 56, text: "下列不一定引起进程调度的情况是：", options: ["A. 在引入时间片的系统中，时间片用完", "B. 新的进程进入就绪队列", "C. 因某种原因执行 block 原语而阻塞", "D. 正在运行的进程异常终止"], ans: "B" },
+            { id: 57, text: "最适合分时系统的进程调度算法是：", options: ["A. FCFS算法", "B. 高响应比优先算法", "C. 轮转法", "D. SJF算法"], ans: "C" },
+            { id: 58, text: "在面向用户的调度准则中，哪一项是实时系统中选择调度算法的重要准则？", options: ["A. 截止时间的保证", "B. 平均周转时间短", "C. 响应时间快", "D. 优先权高的作业能获得优先服务"], ans: "A" },
+            { id: 59, text: "在面向用户的调度准则中，哪一项是分时系统中选择进程调度算法的重要准则？", options: ["A. 平均周转时间短", "B. 响应时间快", "C. 截止时间的保证", "D. 优先权高的作业能获得优先服务"], ans: "B" },
+            { id: 60, text: "下列算法中，哪一项只能采用非抢占调度方式？", options: ["A. FCFS调度算法", "B. 高优先权优先法", "C. 时间片轮转法", "D. 短作业优先算法"], ans: "A" },
+            { id: 61, text: "下列算法中，哪一项只能采用抢占调度方式？", options: ["A. 时间片轮转法", "B. 高优先权优先法", "C. FCFS 调度算法", "D. 短作业优先算法"], ans: "A" },
+            { id: 62, text: "文件系统实现按名存取主要是通过什么来实现的？", options: ["A. 查找位示图", "B. 查找文件目录", "C. 查找作业表", "D. 内存地址转换"], ans: "B" },
+            { id: 63, text: "下面哪一项是指作业进入系统到作业完成所经过的时间间隔？", options: ["A. 周转时间", "B. 响应时间", "C. 运行时间", "D. 等待时间"], ans: "A" },
+            { id: 64, text: "如果为每一个作业只建立一个进程，则为了照顾短作业用户，应采用：", options: ["A. 基于优先权的剥夺调度算法", "B. 短作业优先", "C. 高响应比优先", "D. FCFS 调度算法"], ans: "B" },
+            { id: 65, text: "如果为每一个作业只建立一个进程，为了兼顾短作业和长时间等待的作业，应采用：", options: ["A. 短作业优先", "B. 基于优先权的剥夺调度算法", "C. 高响应比优先", "D. FCFS 调度算法"], ans: "C" },
+            { id: 66, text: "如果为每一个作业只建立一个进程，为了使短作业、长作业及交互作业用户都比较满意，应采用：", options: ["A. 多级反馈队列调度算法", "B. 基于优先权的剥夺调度算法", "C. 高响应比优先", "D. FCFS 调度算法"], ans: "A" },
+            { id: 67, text: "什么文件控制控制块是作业存在的唯一标志？", options: ["A. 作业名", "B. 作业控制块", "C. 程序名", "D. PCB"], ans: "B" },
+            { id: 68, text: "作业生存期共经历 4 个状态，它们是提交、后备、什么和完成？", options: ["A. 开始", "B. 阻塞", "C. 就绪", "D. 运行"], ans: "D" },
+            { id: 75, text: "下列调度方式和算法中，最容易引起进程长期等待的是哪一项？", options: ["A. 抢占式静态优先权优先算法", "B. 时间片轮转算法", "C. 非抢占式静态优先权优先算法", "D. 非抢占式动态优先权优先算法"], ans: "A" },
+            { id: 76, text: "假设就绪队列中有10个进程，以时间片轮转方式进行进程调度，时间片大小为300ms，CPU进行进程切换要花费10ms，则系统开销所占的比率约为：", options: ["A. 3.2% (注: 10/310)", "B. 1%", "C. 5%", "D. 10%"], ans: "A" },
+            { id: 77, text: "EDF（最早截止时间优先）算法选择什么作为下一个执行的进程？", options: ["A. 运行时间最短的进程", "B. 截止时间最早的进程", "C. 松弛度最低的进程", "D. 优先权最高的进程"], ans: "B" },
+            { id: 78, text: "LLF（最低松弛度优先）算法选择什么作为下一个执行的进程？", options: ["A. 松弛度最低的进程", "B. 截止时间最早的进程", "C. 运行时间最短的进程", "D. 优先权最高的进程"], ans: "A" },
+            { id: 79, text: "实时系统中的优先级倒置是指：", options: ["A. 优先权低的进程优先获得CPU", "B. 优先数越大优先权越低", "C. 高优先级进程被低优先级进程延迟或阻塞", "D. 正在执行的高优先权进程老是被低优先权的进程抢占CPU"], ans: "C" },
+            { id: 80, text: "目前主流的操作系统中，对死锁采用的策略是哪一种？", options: ["A. 鸵鸟政策", "B. 死锁预防", "C. 死锁避免", "D. 这里给出的都不是"], ans: "A" },
+            { id: 81, text: "若系统中有 5 台绘图仪，有多个进程请求使用，每个进程均使用 2 台，规定每个进程一次仅允许申请一台。要想不会发生死锁，则至多允许参与竞争的进程个数是：", options: ["A. 5", "B. 4", "C. 3", "D. 2"], ans: "B" },
+            { id: 82, text: "银行家算法在解决死锁问题中是用于什么的？", options: ["A. 避免死锁", "B. 预防死锁", "C. 解除死锁", "D. 检测死锁"], ans: "A" },
+            { id: 83, text: "产生死锁的基本原因是资源不足和：", options: ["A. 系统中进程太多", "B. 资源的独占性", "C. 资源分配不当", "D. 进程推进顺序不当"], ans: "D" },
+            { id: 84, text: "产生死锁的四个必要条件是互斥条件、什么条件、不剥夺条件和环路条件？", options: ["A. 请求和保持条件", "B. 请求和阻塞条件", "C. 请求和释放条件", "D. 释放和阻塞条件"], ans: "A" },
+            { id: 85, text: "死锁的四个必要条件中，一般情况下，最难被破坏的是哪一个？", options: ["A. 环路等待资源", "B. 互斥使用资源", "C. 非抢夺式分配", "D. 占有且等待资源"], ans: "B" },
+            { id: 86, text: "死锁的预防是通过破坏产生死锁的四个必要条件来实现的，下列方法中，哪一项破坏了“请求与保持”条件？", options: ["A. 一次性分配策略", "B. 银行家算法", "C. 资源有序分配策略", "D. Spooling技术"], ans: "A" },
+            { id: 87, text: "下列方法中，哪一项破坏了“循环等待”条件？", options: ["A. 一次性分配策略", "B. 银行家算法", "C. 资源有序分配策略", "D. Spooling技术"], ans: "C" },
+            { id: 91, text: "在存储管理中，采用覆盖与交换技术的目的是：", options: ["A. 物理上扩充内存容量", "B. 节省内存空间", "C. 提高 CPU 效率", "D. 实现内存共享"], ans: "B" },
+            { id: 92, text: "在以下存储管理方案中，不适用于多道程序设计系统的是哪一种？", options: ["A. 单用户连续分配", "B. 固定式分区分配", "C. 可变式分区分配", "D. 页式存储管理"], ans: "A" },
+            { id: 93, text: "把作业地址空间使用的逻辑地址变成内存的物理地址称为：", options: ["A. 加载", "B. 物理化", "C. 逻辑化", "D. 重定位"], ans: "D" },
+            { id: 94, text: "在某系统中采用基址、限长寄存器的方法来保护存储信息，判断是否超界的判别式是哪一个？", options: ["A. 0 ≤ 被访问的逻辑地址 < 限长寄存器的内容", "B. 0 ≤ 被访问的逻辑地址 ≤ 限长寄存器的内容", "C. 0 < 被访问的物理地址 < 限长寄存器的内容", "D. 0 < 被访问的物理地址 ≤ 限长寄存器的内容"], ans: "A" },
+            { id: 95, text: "采用以下哪种存储管理方式不会产生内部碎片？", options: ["A. 分段式存储管理", "B. 分页式存储管理", "C. 固定分区式存储管理", "D. 段页式存储管理"], ans: "A" },
+            { id: 96, text: "存储管理的基本功能是：", options: ["A. 分段分配、地址变换、存储扩充、存储共享与保护", "B. 存储分配、地址变换、存储扩充、存储共享与保护", "C. 分区分配、地址变换、存储扩充、存储共享与保护", "D. 分页分配、地址变换、存储扩充、存储共享与保护"], ans: "B" },
+            { id: 97, text: "计算机系统的二级存储包括：", options: ["A. ROM和RAM", "B. 超高速缓存和内存储器", "C. CPU寄存器和主存缓冲区", "D. 主存储器和辅助存储器"], ans: "D" },
+            { id: 98, text: "支持程序动态浮动的地址转换机制是：", options: ["A. 动态重定位", "B. 段式地址转换", "C. 页式地址转换", "D. 静态重定位"], ans: "A" },
+            { id: 99, text: "采用最佳适应算法时，空闲区应该如何进行排列？", options: ["A. 按大小递减顺序连在一起", "B. 按大小递增顺序连在一起", "C. 按地址由小到大排列", "D. 按地址由大到小排列"], ans: "B" },
+            { id: 100, text: "在可变式分区存储管理中的拼接（紧凑）技术可以：", options: ["A. 集中空闲区", "B. 增加内存容量", "C. 缩短访问周期", "D. 加速地址转换"], ans: "A" },
+            { id: 101, text: "在固定分区分配中，每个分区的大小是：", options: ["A. 可以不同但预先固定", "B. 随作业长度变化", "C. 相同", "D. 可以不同但根据作业长度固定"], ans: "A" },
+            { id: 102, text: "在可变分区存储管理中，主要利用什么技术来消除并合并外部碎片？", options: ["A. 离散技术", "B. 移动技术（紧凑）", "C. 固定技术", "D. 集中技术"], ans: "B" },
+            { id: 103, text: "可变式分区又称为动态分区，它是在系统运行过程中发生以下哪项事件时动态建立的？", options: ["A. 在作业装入时", "B. 在作业创建时", "C. 在作业完成时", "D. 在作业未装入时"], ans: "A" },
+            { id: 105, text: "虚拟存储器的最大容量：", options: ["A. 是任意的", "B. 为内外存容量之和", "C. 由计算机的地址结构决定", "D. 由作业的地址空间决定"], ans: "C" },
+            { id: 106, text: "某虚拟存储器系统采用页式内存管理，使用 LRU 页面替换算法，考虑下面的页面访问地址流：1、8、1、7、8、2、7、2、1、8、3、8、2、1、3、1、7、1、3、7，假定内存容量为 4 个页面，开始时是空的，则产生缺页中断的次数是：", options: ["A. 6", "B. 4", "C. 5", "D. 7"], ans: "A" },
+            { id: 107, text: "分页式虚拟存储系统中，页面的大小与可能产生的缺页中断次数是什么关系？", options: ["A. 成正比", "B. 成反比", "C. 无关", "D. 成固定比例"], ans: "B" },
+            { id: 109, text: "实现虚拟存储器的主要目的是：", options: ["A. 扩充内存容量", "B. 实现存储保护", "C. 实现程序浮动", "D. 扩充辅存容量"], ans: "A" },
+            { id: 110, text: "下述哪一种页面淘汰算法会产生 Belady 异常现象？", options: ["A. 先进先出算法 (FIFO)", "B. 最近最少使用算法 (LRU)", "C. 最不经常使用算法 (LFU)", "D. 最佳置换算法 (OPT)"], ans: "A" },
+            { id: 111, text: "作业在执行中发生了缺页中断，经操作系统处理后，应让其执行什么指令？", options: ["A. 被中断指令的后一条", "B. 被中断指令的前一条", "C. 被中断的该条指令", "D. 启动时的第一条"], ans: "C" },
+            { id: 112, text: "在请求分页存储管理中，若采用 FIFO 页面淘汰算法，则当分配给该进程的物理页面数增加时，其缺页中断的次数如何变化？", options: ["A. 可能增加也可能减少", "B. 减少", "C. 增加", "D. 无影响"], ans: "A" },
+            { id: 113, text: "虚拟存储管理系统的基础是程序的什么理论？", options: ["A. 局部性", "B. 全局性", "C. 动态性", "D. 虚拟性"], ans: "A" },
+            { id: 134, text: "设备分配常用的一种分配调度算法是哪一种？", options: ["A. 先来先服务", "B. 短作业优先", "C. 最佳适应", "D. 首次适应"], ans: "A" },
+            { id: 135, text: "大多数低速外部设备都属于以下哪一类设备？", options: ["A. 独享", "B. 共享", "C. 虚拟", "D. SPOOLing"], ans: "C" },
+            { id: 136, text: "将系统中的每一台设备按某种原则进行统一的编号，这些编号作为区分硬件和识别设备的代号，该编号称为设备的：", options: ["A. 绝对号", "B. 相对号", "C. 类型", "D. 符号名"], ans: "A" },
+            { id: 137, text: "按什么物理特性进行分类，可将外部设备分为块设备和字符设备？", options: ["A. 信息交换单位", "B. 从属关系", "C. 操作特性", "D. 共享属性"], ans: "A" },
+            { id: 138, text: "哪种通道通常用作连接大量的低速或中速 I/O 设备？", options: ["A. 数据选择通道", "B. 字节多路通道", "C. 数据多路通道", "D. 以上都可以"], ans: "B" },
+            { id: 139, text: "以下哪项是直接存取的存储设备？", options: ["A. 打印机", "B. 磁带", "C. 磁盘", "D. 键盘显示终端"], ans: "C" },
+            { id: 140, text: "在中断发生后，进行中断处理的程序属于：", options: ["A. 用户程序", "B. 操作系统程序", "C. 可能是应用程序，也可能是操作系统程序", "D. 既不是应用程序，也不是操作系统程序"], ans: "B" },
+            { id: 141, text: "什么是现代操作系统必须提供的基本机制与功能？", options: ["A. 处理中断", "B. 管理源程序", "C. 编辑源程序", "D. 编译源程序"], ans: "A" },
+            { id: 146, text: "为了解决不同用户文件的“命名冲突”问题，通常在文件系统中采用以下哪种方法？", options: ["A. 多级目录", "B. 约定的方法", "C. 路径", "D. 索引"], ans: "A" },
+            { id: 147, text: "存放在磁盘上的文件具有什么存取和物理结构特征？", options: ["A. 既可随机访问，又可顺序访问", "B. 只能随机访问", "C. 只能顺序访问", "D. 不能随机访问"], ans: "A" },
+            { id: 148, text: "位示图主要可用于操作系统的以下哪个方面？", options: ["A. 文件目录的查找", "B. 磁盘空间的管理", "C. 内存空间的共享", "D. 实现文件的保护和保密"], ans: "B" },
+            { id: 149, text: "最常用的流式文件是字符流文件，它可看成是以下哪项的集合？", options: ["A. 记录", "B. 数据", "C. 字符序列", "D. 页面"], ans: "C" },
+            { id: 150, text: "操作系统中对文件进行管理和存取控制的部分叫做：", options: ["A. 文件系统", "B. 数据库系统", "C. 检索系统", "D. 数据存储系统"], ans: "A" }
+        ];
+
+        // 2. 填空题数据 (Blanks)
+        const blanksData = [
+            { id: 11, text: "操作系统的四个基本特征是：______、______、______、______。", ans: ["并发", "共享", "异步", "虚拟"] },
+            { id: 90, text: "分段存储管理下的逻辑地址结构分为 ______ 和 ______ 两个部分。", ans: ["段号", "段内地址"] },
+            { id: 104, text: "内存零碎碎片按产生原理分为 ______ 碎片和 ______ 碎片。", ans: ["内部", "外部"] },
+            { id: 108, text: "I/O 设备控制方式包括：程序直接控制方式、______ 方式、DMA 控制方式以及通道控制方式。", ans: ["中断控制", "中断"] }, // 兼容模糊
+            { id: 115, text: "多道程序设计技术是为了提高 ______ 和外部设备并行工作的能力。", ans: ["CPU", "处理器"] },
+            { id: 117, text: "为使进程由阻塞状态转变成就绪状态，应调用 ______ 原语。", ans: ["wakeup()", "wakeup"] },
+            { id: 118, text: "在请求分页式存储管理中采用 FIFO 页面淘汰算法时，增加分配给作业的块数，缺页中断数可能反而增加，这被称为 ______ 现象。", ans: ["Belady", "贝莱蒂"] },
+            { id: 119, text: "在可变分区存储管理中，分区的保护通常采用 ______ 和 ______ 两种方法。", ans: ["界限寄存器", "存储保护键"] },
+            { id: 120, text: "采用内存交换技术（Swapping）获得内存扩充好处是以牺牲 ______ 为代价的。", ans: ["CPU时间", "CPU 时间", "处理机时间"] },
+            { id: 121, text: "设备的独立性（设备无关性）是指应用程序独立于 ______ 硬件。", ans: ["物理设备", "实际物理设备"] },
+            { id: 122, text: "把作业装入内存中随即进行地址映射变换的方式称为 ______，而在作业执行期间，当访问到指令或数据时才进行物理重定位的方式称为 ______。", ans: ["静态重定位", "动态重定位"] },
+            { id: 123, text: "在分时系统中，用户的数目为 50 个，为保证响应时间不超过 2s，则时间片最大为 ______ ms。", ans: ["40"] },
+            { id: 124, text: "在动态分区分配算法中，首次适应算法倾向于优先利用内存中 ______ 处的空闲分区，从而保留了 ______ 处的大空闲区。", ans: ["低地址", "高地址"] },
+            { id: 125, text: "在存储管理方案中，可用上下限地址寄存器实现存储物理保护的是 ______ 方案。", ans: ["分区分配", "动态分区分配"] },
+            { id: 126, text: "在随机存取方式中，用户以 ______ 为单位对逻辑文件进行存取和检索。", ans: ["记录"] },
+            { id: 127, text: "用户在进行程序编制时使用的是 ______ 地址，而处理器在执行指令时硬件寻址使用的是 ______ 地址。", ans: ["逻辑", "物理"] },
+            { id: 128, text: "传统分区存储管理方案不能实现虚拟内存存储的主要原因是 ______ 限制。", ans: ["作业的地址空间不能超过存储空间", "作业地址空间不能超过实际物理空间"] },
+            { id: 145, text: "文件的物理结构（物理组织形式）主要有连续结构（顺序结构）、______ 和 ______。", ans: ["链接结构", "索引结构"] }
+        ];
+
+        // 3. 程序题数据 (Programs - PV Sync)
+        const programsData = [
+            {
+                id: 45,
+                title: "1. 奇偶分类缓冲区统计问题（8空）",
+                desc: "三个进程 P1、P2、P3 互斥使用包含 N 个单元的缓冲区。P1 生成正整数送入缓冲区空单元；P2 取奇数统计奇数个数；P3 取偶数统计偶数个数。<br>定义信号量：odd=0，even=0，empty=N，mutex=1。",
+                guide: "1: P(mutex); &nbsp; 2: V(mutex); &nbsp; 3: P(empty); &nbsp; 4: V(empty); &nbsp; 5: P(odd); &nbsp; 6: V(odd); &nbsp; 7: P(even); &nbsp; 8: V(even)",
+                code: `// 进程 P1
+while(1) {
+    x = produce();
+    A ____1____;
+    B ____2____;
+    put();
+    C ____3____;
+    if(x % 2 == 0) D ____4____;
+    else E ____5____;
+}
+// 进程 P2
+while(1) {
+    F ____6____;
+    B;
+    getodd();
+    C;
+    G ____7____;
+    countodd();
+}
+// 进程 P3
+while(1) {
+    H ____8____;
+    B;
+    geteven();
+    C;
+    G;
+    counteven();
+}`,
+                ans: ["3", "1", "2", "8", "6", "5", "4", "7"],
+                explanation: "A=3 (申请空闲缓冲区单元); B=1 (缓冲区临界互斥保护); C=2 (释放互斥量); D=8 (通知偶数进程有新资源); E=6 (通知奇数进程); F=5 (等待并申请奇数); G=4 (释放空闲缓冲区单元); H=7 (等待并申请偶数)。"
+            },
+            {
+                id: 46,
+                title: "2. A、B 篮子双边物品互惠交换（8空）",
+                desc: "两人通过篮子交换物品，A 的篮子最多放 M 个，B 最多放 N 个。开始时分别有 x, y 件物品（0 < x < y < M < N）。<br>信号量：fulla=M, fullb=N（注：原卷答案设定如此），emptya=M-x, emptyb=N-y，ma=1, mb=1 互斥锁。",
+                guide: "1: P(emptya); &nbsp; 2: V(emptya); &nbsp; 3: P(emptyb); &nbsp; 4: V(emptyb); &nbsp; 5: P(fulla); &nbsp; 6: V(fulla); &nbsp; 7: P(fullb); &nbsp; 8: V(fullb)",
+                code: `process A {
+    while(1) {
+        A ____1____;
+        P(ma);
+        从A篮子取物品;
+        V(ma);
+        B ____2____;
+        挑选物品;
+        C ____3____;
+        P(mb);
+        将物品放入B篮子;
+        V(mb);
+        D ____4____;
+    }
+}
+process B {
+    while(1) {
+        E ____5____;
+        P(mb);
+        从B篮子取物品;
+        V(mb);
+        F ____6____;
+        挑选物品;
+        G ____7____;
+        P(ma);
+        将物品放入A篮子;
+        V(ma);
+        H ____8____;
+    }
+}`,
+                ans: ["5", "2", "3", "8", "7", "4", "1", "6"],
+                explanation: "本流程为 A 进程和 B 进程互相作为生产者和消费者，分别处理两个不同容量的缓冲区。"
+            },
+            {
+                id: 47,
+                title: "3. 银行营业厅单窗口叫号系统（6空）",
+                desc: "1个服务窗口，N 个等待座位。取号机每次仅允许一人使用。柜员空闲时叫号。<br>信号量：sets=N（空闲座位数），mutex=1（取号机锁），custom=0（就绪顾客数）。",
+                guide: "1: P(mutex); &nbsp; 2: V(mutex); &nbsp; 3: P(custom); &nbsp; 4: V(custom); &nbsp; 5: P(sets); &nbsp; 6: V(sets)",
+                code: `process 顾客 {
+    A ____1____;
+    B ____2____;
+    从取号机获得号码;
+    C ____3____;
+    D ____4____;
+    E ____5____;
+    获得服务;
+}
+process 营业员 {
+    while(TRUE) {
+        F ____6____;
+        叫号;
+        为顾客服务;
+    }
+}`,
+                ans: ["5", "1", "2", "4", "6", "3"],
+                explanation: "顾客到达先占座位(P(sets))和取号机(P(mutex))，取号后让出取号机(V(mutex))并通知柜员(V(custom))；被叫号时释放座位(V(sets))；柜员无顾客时阻塞(P(custom))。"
+            },
+            {
+                id: 48,
+                title: "4. 双向独木桥单行行人控制（6空）",
+                desc: "某一方向有人过桥时，另一方向必须等待。PA和PB分别控制两个方向行流。两方向行人数为 counta, countb。<br>信号量：mutex=1桥控制权，sa=1, sb=1分别互斥修改人数计数器。",
+                guide: "1: P(mutex); &nbsp; 2: V(mutex); &nbsp; 3: P(sa); &nbsp; 4: V(sa); &nbsp; 5: P(sb); &nbsp; 6: V(sb)",
+                code: `process PA {
+    A ____1____;
+    if(counta == 0) B ____2____;
+    counta++;
+    C ____3____;
+    过独木桥;
+    A;
+    counta--;
+    if(counta == 0) D ____4____;
+    C;
+}
+process PB {
+    E ____5____;
+    if(countb == 0) B;
+    countb++;
+    F ____6____;
+    过独木桥;
+    E;
+    countb--;
+    if(countb == 0) D;
+    F;
+}`,
+                ans: ["3", "1", "4", "2", "5", "6"],
+                explanation: "经典的双读者进程读者-写者问题变形。只要当前方向人数不为 0，就无需再次申请桥(P(mutex))，最后一个离开的释放桥控制权。"
+            },
+            {
+                id: 49,
+                title: "5. 采样-转换-显示三阶段流水系统（8空）",
+                desc: "采样存电压入缓冲，转换取电压计算温度存缓冲，显示取温度显示。<br>信号量：mutex=1缓冲区，svoltage=0，stemperature=0，empty=1空单元。",
+                guide: "1: P(mutex); &nbsp; 2: V(mutex); &nbsp; 3: P(empty); &nbsp; 4: V(empty); &nbsp; 5: P(svoltage); &nbsp; 6: V(svoltage); &nbsp; 7: P(stemperature); &nbsp; 8: V(stemperature)",
+                code: `process sample {
+    取得电压
+    A ____1____;
+    B ____2____;
+    存入缓冲区;
+    C ____3____;
+    D ____4____;
+}
+process convert {
+    E ____5____;
+    B;
+    取出电压;
+    C;
+    转换为温度;
+    B;
+    把温度写入缓冲区;
+    C;
+    F ____6____;
+}
+process display {
+    G ____7____;
+    B;
+    取出温度;
+    C;
+    H ____8____;
+    显示温度;
+}`,
+                ans: ["3", "1", "2", "6", "5", "8", "7", "4"],
+                explanation: "此流程通过电压缓冲和温度缓冲实现典型的生产者-中间转换-消费者的管道级流水。"
+            },
+            {
+                id: 50,
+                title: "6. 果盘吃水果同步设计问题（8空）",
+                desc: "盘中装 N 个水果。爸爸放水果，儿子拿桔子，女儿拿苹果。<br>信号量：empty=N，orange=0，apple=0，mutex=1控制果盘互斥锁。",
+                guide: "1: P(empty); &nbsp; 2: V(empty); &nbsp; 3: P(mutex); &nbsp; 4: V(mutex); &nbsp; 5: P(apple); &nbsp; 6: V(apple); &nbsp; 7: P(orange); &nbsp; 8: V(orange)",
+                code: `Dad() {
+    while(1) {
+        A ____1____;
+        B ____2____;
+        将水果放入盘子;
+        C ____3____;
+        if(放入的是桔子) D ____4____;
+        else E ____5____;
+    }
+}
+Son() {
+    while(1) {
+        F ____6____;
+        B;
+        从盘子中取桔子;
+        C;
+        G ____7____;
+        吃桔子;
+    }
+}
+Daughter() {
+    while(1) {
+        H ____8____;
+        B;
+        从盘子中取苹果;
+        C;
+        G;
+        吃苹果;
+    }
+}`,
+                ans: ["1", "3", "4", "8", "6", "7", "2", "5"],
+                explanation: "典型的多消费者单生产者共享容量为 N 的缓冲区块问题。"
+            },
+            {
+                id: 51,
+                title: "7. 传送带合作搬运流水线问题（8空）",
+                desc: "PA从仓库放传送带(限1)，PB从传送带拿放盒子(限1)，PC从盒子摆柜台。<br>信号量：emptyBelt=1, emptyBox=1, fullBelt=0, fullBox=0。",
+                guide: "1: P(fullBelt); &nbsp; 2: V(fullBelt); &nbsp; 3: P(fullBox); &nbsp; 4: V(fullBox); &nbsp; 5: P(emptyBelt); &nbsp; 6: V(emptyBelt); &nbsp; 7: P(emptyBox); &nbsp; 8: V(emptyBox)",
+                code: `PA() {
+    while(1) {
+        取物品
+        A ____1____;
+        将物品放入传送带;
+        B ____2____;
+    }
+}
+PB() {
+    while(1) {
+        C ____3____;
+        从传送带中取物品;
+        D ____4____;
+        E ____5____;
+        将物品放入盒子;
+        F ____6____;
+    }
+}
+PC() {
+    while(1) {
+        G ____7____;
+        从盒子中取物品;
+        H ____8____;
+        摆放物品;
+    }
+}`,
+                ans: ["5", "2", "1", "6", "7", "4", "3", "8"],
+                explanation: "本题中的传送带和盒子是前后连接的、容量皆为 1 的物理暂存区。"
+            }
+        ];
+
+        // 4. 问答题数据 (Questions - Math Calculation & Detailed Analysis)
+        const questionsData = [
+            {
+                id: 69,
+                title: "1. 抢占式短作业优先 (SRTF) CPU 进程调度（数据源 1 - AI标注答案）",
+                desc: "按<b>抢占的短作业优先 (SRTF)</b> 进行 CPU 调度计算。数据源：<br>A(到达 0, 服务 3); B(到达 1, 服务 6); C(到达 3, 服务 5); D(到达 5, 服务 2); E(到达 7, 服务 4)",
+                blanks: [
+                    { label: "B的完成时间", ans: "20" },
+                    { label: "B的周转时间", ans: "19" },
+                    { label: "B的带权周转", ans: "3.17" },
+                    { label: "E的完成时间", ans: "14" },
+                    { label: "E的周转时间", ans: "7" },
+                    { label: "E的带权周转", ans: "1.75" },
+                    { label: "平均周转时间", ans: "7.6" },
+                    { label: "平均带权周转", ans: "1.66" }
+                ],
+                explanation: "<b>【AI计算推导板】</b><br>甘特时序：A(0-3) → C(3-5) → D(5-7) → C(7-10) → E(10-14) → B(14-20)。<br>由于 D 在 $t=5$ 时到达（运行2个时间单位），此时正在执行的 C 仍需运行 3 个单位。2 < 3，触发抢占。C 在 $t=7$ 恢复。"
+            },
+            {
+                id: 70,
+                title: "2. 非抢占短作业优先 (SJF) CPU 进程调度（数据源 1 - AI标注答案）",
+                desc: "按<b>非抢占短作业优先 (SJF)</b> 算法。数据源：<br>A(到达 0, 服务 3); B(到达 1, 服务 6); C(到达 3, 服务 5); D(到达 5, 服务 2); E(到达 7, 服务 4)",
+                blanks: [
+                    { label: "B的完成时间", ans: "20" },
+                    { label: "B的周转时间", ans: "19" },
+                    { label: "B的带权周转", ans: "3.17" },
+                    { label: "E的完成时间", ans: "14" },
+                    { label: "E的周转时间", ans: "7" },
+                    { label: "E的带权周转", ans: "1.75" },
+                    { label: "平均周转时间", ans: "7.8" },
+                    { label: "平均带权周转", ans: "1.88" }
+                ],
+                explanation: "<b>【AI计算推导板】</b><br>甘特时序：A(0-3) → C(3-8) → D(8-10) → E(10-14) → B(14-20)。<br>因为是非抢占，A 结束后（t=3）挑选服务时间更短的 C 执行。C 完成前 D 即使到达也不会抢占调度。"
+            },
+            {
+                id: 71,
+                title: "3. 先来先服务 (FCFS) CPU 进程调度（数据源 1 - AI标注答案）",
+                desc: "按<b>先来先服务 (FCFS)</b> 算法进行 CPU 调度。数据源：<br>A(到达 0, 服务 3); B(到达 1, 服务 6); C(到达 3, 服务 5); D(到达 5, 服务 2); E(到达 7, 服务 4)",
+                blanks: [
+                    { label: "B的完成时间", ans: "9" },
+                    { label: "B的周转时间", ans: "8" },
+                    { label: "B的带权周转", ans: "1.33" },
+                    { label: "E的完成时间", ans: "20" },
+                    { label: "E的周转时间", ans: "13" },
+                    { label: "E的带权周转", ans: "3.25" },
+                    { label: "平均周转时间", ans: "9.20" },
+                    { label: "平均带权周转", ans: "2.66" }
+                ],
+                explanation: "<b>【AI计算推导板】</b><br>甘特时序：A(0-3) → B(3-9) → C(9-14) → D(14-16) → E(16-20)。"
+            },
+            {
+                id: 72,
+                title: "4. 时间片轮转 (RR, 时间片 q=1) CPU 进程调度（数据源 2 - AI标注答案）",
+                desc: "按时间片 $q=1$ 轮转调度。数据源：<br>A(到达 0, 服务 3); B(到达 2, 服务 6); C(到达 4, 服务 4); D(到达 6, 服务 5); E(到达 8, 服务 2)",
+                blanks: [
+                    { label: "A的完成时间", ans: "4" },
+                    { label: "A的周转时间", ans: "4" },
+                    { label: "A的带权周转", ans: "1.33" },
+                    { label: "E的完成时间", ans: "15" },
+                    { label: "E的周转时间", ans: "7" },
+                    { label: "E的带权周转", ans: "3.50" },
+                    { label: "平均周转时间", ans: "10.8" },
+                    { label: "平均带权周转", ans: "2.71" }
+                ],
+                explanation: "<b>【AI计算推导板】</b><br>严格执行 FIFO 时序轮转，进程到达时依序排在就绪队尾，计算出 A 完工时间为 4，E 完工时间为 15。"
+            },
+            {
+                id: 73,
+                title: "5. 抢占式短作业优先 (SRTF) CPU 进程调度（数据源 2 - AI标注答案）",
+                desc: "按 SRTF（抢占短作业）算法。数据源：<br>A(到达 0, 服务 3); B(到达 2, 服务 6); C(到达 4, 服务 4); D(到达 6, 服务 5); E(到达 8, 服务 2)",
+                blanks: [
+                    { label: "A的完成时间", ans: "3" },
+                    { label: "A的周转时间", ans: "3" },
+                    { label: "A的带权周转", ans: "1.00" },
+                    { label: "E的完成时间", ans: "10" },
+                    { label: "E的周转时间", ans: "2" },
+                    { label: "E的带权周转", ans: "1.00" },
+                    { label: "平均周转时间", ans: "7.2" },
+                    { label: "平均带权周转", ans: "1.59" }
+                ],
+                explanation: "<b>【AI计算推导板】</b><br>时序：A(0-3) → B(3-4) → C(4-8) → E(8-10) → B(10-15) → D(15-20)。"
+            },
+            {
+                id: 74,
+                title: "6. 高响应比优先 (HRRN) CPU 进程调度（数据源 2 - AI标注答案）",
+                desc: "按<b>高响应比优先 (HRRN)</b>。数据源：<br>A(到达 0, 服务 3); B(到达 2, 服务 6); C(到达 4, 服务 4); D(到达 6, 服务 5); E(到达 8, 服务 2)",
+                blanks: [
+                    { label: "A的完成时间", ans: "3" },
+                    { label: "A的周转时间", ans: "3" },
+                    { label: "A的带权周转", ans: "1.00" },
+                    { label: "E的完成时间", ans: "15" },
+                    { label: "E的周转时间", ans: "7" },
+                    { label: "E的带权周转", ans: "3.50" },
+                    { label: "平均周转时间", ans: "8.0" },
+                    { label: "平均带权周转", ans: "2.14" }
+                ],
+                explanation: "<b>【AI计算推导板】</b><br>时序：A(0-3) → B(3-9) → C(9-13) → E(13-15) → D(15-20)。在 $t=9$ 时 C 响应比最大优先；在 $t=13$ 时 E 的响应比为 $(5+2)/2=3.5$ 最优先。"
+            },
+            {
+                id: 88,
+                title: "7. 银行家算法安全性分析 1（AI标注答案）",
+                desc: "Available=(2,1,2)，P4 提出 Request_4=(1,0,1)。输入元素间无需任何分隔符，例如：202、P4P2P1P3。",
+                blanks: [
+                    { label: "P4的剩余需求向量 Need_4", ans: "202" },
+                    { label: "Request_4 <= Need_4 比对结果", ans: "101<=202" },
+                    { label: "Request_4 <= Available 比对结果", ans: "101<=212" },
+                    { label: "试分配后 Available'", ans: "111" },
+                    { label: "最终检测到的安全序列", ans: "P4P2P1P3" } // 兼容 P4P2P3P1
+                ],
+                explanation: "<b>【AI计算推导板】</b><br>Request_4=(1,0,1) <= Need_4=(2,0,2) 且 <= Available=(2,1,2)。试分配后 Available'=(1,1,1)。<br>满足安全性检查，安全序列可以为 P4 → P2 → P1 → P3（也可以是 P4 → P2 → P3 → P1）。"
+            },
+            {
+                id: 89,
+                title: "8. 银行家算法安全性分析 2（矩阵变动版 - AI标注答案）",
+                desc: "进程排列发生了变化。Available=(2,1,2)，P4 提出 Request_4=(1,0,1)。",
+                blanks: [
+                    { label: "P4剩余需求向量", ans: "202" },
+                    { label: "Request_4 <= Need_4", ans: "101<=202" },
+                    { label: "Request_4 <= Available", ans: "101<=212" },
+                    { label: "试分配 Available'", ans: "111" },
+                    { label: "最终安全序列", ans: "P4P3P2P1" } // 兼容 P4P3P1P2
+                ],
+                explanation: "<b>【AI计算推导板】</b><br>此排列顺序下，安全性检查后可通过安全序列 P4 → P3 → P2 → P1 安全执行。"
+            },
+            {
+                id: 114,
+                title: "9. 页式存储物理有效位计算（AI标注答案）",
+                desc: "8页逻辑空间，每页有 1024 字节，映射到 32 块物理区中。求逻辑地址和物理地址的有效位数。",
+                blanks: [
+                    { label: "逻辑地址有效位 (位)", ans: "13" },
+                    { label: "物理地址有效位 (位)", ans: "15" }
+                ],
+                explanation: "<b>【AI计算推导板】</b><br>页容量 $1024 = 2^{10}$ 字节，页内偏移为 10 位。8 页 $= 2^3$，逻辑页号占 3 位，总逻辑物理地址 $= 3 + 10 = 13$ 位。32 物理块 $= 2^5$，物理块号 5 位，总物理地址 $= 5 + 10 = 15$ 位。"
+            },
+            {
+                id: 116,
+                title: "10. 页面置换调度算法淘汰序列计算（AI标注答案）",
+                desc: "序列：1, 2, 3, 4, 5, 6, 7, 4, 2, 1, 3, 6, 7, 4。分配内存 4 块。求淘汰页号顺序（用半角逗号隔开，例如: 1,2,3...）",
+                blanks: [
+                    { label: "FIFO 置换算法下，淘汰页号顺序为", ans: "1,2,3,4,5,6,2,1" },
+                    { label: "LRU 置换算法下，淘汰页号顺序是", ans: "1,2,3,5,6,7,4,2,1" }
+                ],
+                explanation: "<b>【AI计算推导板】</b><br>根据 4 块内存的先进先出（FIFO）及最近最久未使用（LRU）原则依次进行链式滑动淘汰。"
+            },
+            {
+                id: 129,
+                title: "11. 页式虚拟地址映射物理地址 1（AI标注答案）",
+                desc: "某作业页表页号 0, 1, 2, 3 映射块号为 2, 3, 1, 6。页面 1024 字节。逻辑地址 1011 转换为物理地址为：",
+                blanks: [
+                    { label: "逻辑地址 1011 的物理地址为", ans: "3059" }
+                ],
+                explanation: "页号 $= 1011 / 1024 = 0$，偏移量 $= 1011 \pmod{1024} = 1011$。页号 0 对应块号 2。物理地址 $= 2 \times 1024 + 1011 = 3059$。"
+            },
+            {
+                id: 130,
+                title: "12. 页式虚拟地址映射物理地址 2（AI标注答案）",
+                desc: "逻辑地址 2148 转化为物理地址为：",
+                blanks: [
+                    { label: "逻辑地址 2148 的物理地址为", ans: "1124" }
+                ],
+                explanation: "页号 $= 2148 / 1024 = 2$，页内偏移量 $= 2148 \pmod{1024} = 100$。页号 2 对应物理块号 1。物理地址 $= 1 \times 1024 + 100 = 1124$。"
+            },
+            {
+                id: 131,
+                title: "13. 页式虚拟地址映射物理地址 3（越界保护 - AI标注答案）",
+                desc: "逻辑地址 5012 转化为物理地址（若越界产生非法中断，请准确填入：<b>因页号超过页表长度，该逻辑地址非法。</b>）：",
+                blanks: [
+                    { label: "逻辑地址 5012 的地址映射结果", ans: "因页号超过页表长度，该逻辑地址非法。" }
+                ],
+                explanation: "页号 $= 5012 / 1024 = 4$。页表长度为 4（页号 0~3），4 已经发生了页号越界非法中断。"
+            },
+            {
+                id: 132,
+                title: "14. 页式虚拟地址映射物理地址 4（十六进制映射 - AI标注答案）",
+                desc: "虚拟存储32页，每页1KB。第0,1,2,3页分别分配物理块号为5,10,4,7。虚地址 0B5CH 变换物理地址为（16进制表示并以 H 结尾）：",
+                blanks: [
+                    { label: "0B5CH 的物理地址为", ans: "135CH" }
+                ],
+                explanation: "0B5CH 的二进制前 5 位页号为 2，偏移量为 35CH。页号 2 物理映射块为 4 (二进制为 00100)。拼接得到二进制，换成16进制即为 135CH。"
+            },
+            {
+                id: 142,
+                title: "15. SSTF 磁盘调度总寻道长度计算（AI标注答案）",
+                desc: "磁盘请求：20, 44, 40, 4, 80, 12, 76。磁头在 40。按最短寻道时间优先 (SSTF) 计算总寻道长度：",
+                blanks: [
+                    { label: "SSTF 算法总寻道长度为", ans: "120" }
+                ],
+                explanation: "<b>【AI计算推导板】</b><br>服务路线：40 → 44 → 20 → 12 → 4 → 76 → 80。<br>寻道位移累计 $= 4 + 24 + 8 + 8 + 72 + 4 = 120$。"
+            },
+            {
+                id: 143,
+                title: "16. SCAN 磁盘调度总寻道长度计算（AI标注答案）",
+                desc: "磁头当前在 40。按电梯调度 (SCAN) 算法（假设向磁道号增加的大方向移动）计算总寻道长度：",
+                blanks: [
+                    { label: "SCAN 算法总寻道长度为", ans: "116" }
+                ],
+                explanation: "<b>【AI计算推导板】</b><br>服务路线：40 → 44 → 76 → 80 → 20 → 12 → 4。<br>寻道位移累计 $= (80 - 40) + (80 - 4) = 116$。"
+            },
+            {
+                id: 144,
+                title: "17. FCFS 磁盘调度总寻道长度计算（AI标注答案）",
+                desc: "磁头当前在 40。先来先服务 (FCFS) 计算总寻道长度：",
+                blanks: [
+                    { label: "FCFS 算法总寻道长度为", ans: "292" }
+                ],
+                explanation: "<b>【AI计算推导板】</b><br>服务路线：40 → 20 → 44 → 40 → 4 → 80 → 12 → 76。<br>寻道位移累计 $= 20 + 24 + 4 + 36 + 76 + 68 + 64 = 292$。"
+            }
+        ];
+
+        // 5. 简答题数据 (Essays - Brief Answer Qs with grading key)
+        const essaysData = [
+            { id: 1, q: "1、什么是临界资源和临界区?", a: "• <b>临界资源：</b>一段时间内只允许一个进程独占访问和操作的共享资源。<br>• <b>临界区：</b>在每个进程中，用于访问并修改该临界资源的那段程序代码。" },
+            { id: 2, q: "2、为什么要引入缓冲管理？", a: "1) 缓和 CPU 与 I/O 设备之间物理速度不匹配的矛盾。<br>2) 降低对 CPU 的中断频率，放宽对 CPU 中断响应时间的限制。<br>3) 极大提高 CPU 与 I/O 设备之间的并行工作效率。" },
+            { id: 3, q: "3、请比较中断驱动 I/O 方式 and DMA 方式有什么不同?", a: "• <b>传输单位不同：</b>中断驱动方式以<b>字节</b>为单位传输；DMA 方式以<b>数据块</b>为单位。<br>• <b>CPU 干预度不同：</b>中断驱动在每个字节读写时都需要 CPU 干预中断；DMA 仅在整块数据传输开始和结束时由 CPU 介入，中间纯由 DMA 控制器硬件自主传输。" },
+            { id: 4, q: "4、请简述 SPOOLING 技术以及它的组成情况。", a: "SPOOLing（假脱机技术）是通过多道程序技术将一台<b>独占式物理设备</b>模拟改造成多台可并发共享的<b>虚拟设备</b>的技术。<br><b>其主要组成结构包括：</b><br>1) 磁盘上的输入井与输出井；<br>2) 内存中的输入缓冲区与输出缓冲区；<br>3) 输入进程和输出进程；<br>4) 共享设备物理体及管理软件机制。" },
+            { id: 5, q: "5、简述分页和分段存储管理的核心区别。", a: "• <b>管理目的不同：</b>分页是出于系统<b>物理管理、消除外部碎片</b>的需要，对用户透明；分段是为了满足用户在<b>逻辑保护、模块化程序设计与共享</b>上的需要，对用户可见。<br>• <b>物理大小不同：</b>页的大小固定且由系统决定；段的长度不固定，取决于程序本身。<br>• <b>地址维度不同：</b>分页的作业地址空间是<b>一维的</b>；分段的作业地址空间是<b>二维的</b>。" },
+            { id: 6, q: "6、简述虚拟存储器的工作原理。", a: "基于<b>程序的局部性原理</b>，作业装入时仅将当前需要的页面装入内存，其余留在外存。当程序访问到未装入的页面时，硬件触发<b>缺页中断</b>，操作系统利用<b>调页功能</b>将外存页面换入。若内存已满，则利用<b>置换功能</b>依据置换算法将暂不用的页面淘汰至外存，实现大作业在小内存中的运行效果。" },
+            { id: 7, q: "7、不安全状态是否必然导致系统死锁？为什么？", a: "<b>结论：不一定。</b><br><b>原因：</b>不安全状态仅意味着系统在最坏分配情况（所有进程同时申请最大需求资源）下<b>可能</b>会发生死锁。如果在实际运行中，部分进程在达到最大需求前便释放了部分资源，或者某些进程并没有立即提出最大请求，系统仍能安全执行而不会死锁。银行家算法作安全性检查属于最差预防机制。" },
+            { id: 8, q: "8、请解释进程与程序的区别与联系。", a: "• <b>本质区别：</b><br>1) 进程是<b>动态的</b>，拥有生命周期，可创建、阻塞、就绪与灭亡；程序是<b>静态的</b>，是外部存储介质上的指令集合。<br>2) 进程是系统进行<b>资源分配和调度</b>的物理单位，程序不是。<br>3) 进程与程序非一一对应，一个程序可实例化为多个进程。<br>• <b>重要联系：</b>进程是程序的一次执行过程，程序是进程的静态实体核心。" },
+            { id: 9, q: "9、简述死锁产生的四个必要条件。", a: "1) <b>互斥条件：</b>一个资源在一段时间内只能被一个进程独占使用。<br>2) <b>请求和保持条件：</b>进程已获得了某些资源但又提出新请求，对已占有的资源不予释放。<br>3) <b>不剥夺条件：</b>进程已获得的资源在未使用完前不能被系统强行收回。<br>4) <b>循环等待条件：</b>存在一个进程资源的环形等待链，每个进程都在等待下一个进程占有的资源。" },
+            { id: 10, q: "10、简述抢占式调度与非抢占式调度的区别。", a: "• <b>非抢占式调度：</b>一旦把处理机分配给某进程，它就一直运行下去，直到该进程完成或因发生某事件而阻塞，系统<b>绝不强行收回</b>处理机。<br>• <b>抢占式调度：</b>允许调度程序根据某种原则（如优先权或时间片），去<b>强行暂停</b>正在执行的进程，将处理机重新分配给另一个更紧迫的进程。" }
+        ];
+
+        let currentMode = 'test'; // 默认是空白自测模式 'test'
+
+        // 切换背诵/自测模式
+        function setMode(mode) {
+            currentMode = mode;
+            const bBtn = document.getElementById('mode-browse-btn');
+            const tBtn = document.getElementById('mode-test-btn');
+            if(mode === 'browse') {
+                bBtn.className = "px-2.5 py-1 rounded-md font-bold transition bg-slate-700 text-white";
+                tBtn.className = "px-2.5 py-1 rounded-md font-bold transition text-slate-400 hover:text-white";
+            } else {
+                tBtn.className = "px-2.5 py-1 rounded-md font-bold transition bg-slate-700 text-white";
+                bBtn.className = "px-2.5 py-1 rounded-md font-bold transition text-slate-400 hover:text-white";
+            }
+            renderAll();
+            updateScores();
+        }
+
+        // 统一初次和切换渲染
+        function renderAll() {
+            renderChoices();
+            renderBlanks();
+            renderPrograms();
+            renderQuestions();
+            renderEssays();
+        }
+
+        // 1. 渲染选择题
+        function renderChoices() {
+            const container = document.getElementById('choices-box');
+            container.innerHTML = '';
+
+            choicesData.forEach((q, idx) => {
+                const div = document.createElement('div');
+                div.className = "p-4 rounded-xl border border-slate-100 hover:bg-slate-50/50 transition flex flex-col gap-2.5";
+                
+                let answerArea = '';
+                if(currentMode === 'browse') {
+                    answerArea = `<span class="ml-2 font-mono font-bold text-emerald-600 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-md text-xs">标准答案: ${q.ans}</span>`;
+                } else {
+                    answerArea = `
+                        <select id="choice-ans-${q.id}" class="choice-input border border-slate-300 rounded-lg px-2 py-1 text-xs bg-white text-slate-800 focus:border-emerald-500 focus:outline-none ml-2">
+                            <option value="">选择答案</option>
+                            <option value="A">A</option>
+                            <option value="B">B</option>
+                            <option value="C">C</option>
+                            <option value="D">D</option>
+                        </select>
+                        <span id="choice-feedback-${q.id}" class="ml-2 text-xs font-bold"></span>
+                    `;
+                }
+
+                div.innerHTML = `
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                        <p class="text-sm font-semibold text-slate-800 leading-relaxed flex-grow">
+                            <span class="text-slate-400 font-mono mr-2">${idx + 1}.</span>${q.text}
+                        </p>
+                        <div class="shrink-0 flex items-center">${answerArea}</div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-2 mt-1 pl-6 text-xs text-slate-500">
+                        ${q.options.map(opt => `<div class="py-1">${opt}</div>`).join('')}
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        // 2. 渲染填空题
+        function renderBlanks() {
+            const container = document.getElementById('blanks-box');
+            container.innerHTML = '';
+
+            blanksData.forEach((q, idx) => {
+                const div = document.createElement('div');
+                div.className = "p-4 rounded-xl border border-slate-100 hover:bg-slate-50/50 transition";
+                
+                let blankFields = '';
+                if(currentMode === 'browse') {
+                    blankFields = q.ans.map(a => `<span class="mx-1 px-2.5 py-0.5 bg-emerald-50 border border-emerald-200 text-emerald-700 font-bold rounded-md font-mono text-xs">${a}</span>`).join('、');
+                } else {
+                    blankFields = q.ans.map((a, aIdx) => `
+                        <input type="text" id="blank-ans-${q.id}-${aIdx}" class="blank-input border-b border-slate-300 w-28 text-center text-xs py-0.5 mx-1 focus:border-emerald-500 focus:outline-none" placeholder="填空">
+                    `).join('、');
+                }
+
+                div.innerHTML = `
+                    <div class="text-sm font-semibold text-slate-800 leading-relaxed">
+                        <span class="text-slate-400 font-mono mr-2">${idx + 1}.</span>${q.text.replace(/______/g, ' [空] ')}
+                        <div class="inline-flex flex-wrap items-center mt-2 pl-6 gap-1">
+                            <span class="text-xs text-slate-400">您的答案：</span>${blankFields}
+                            <span id="blank-feedback-${q.id}" class="ml-2 text-xs font-bold inline-block"></span>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        // 3. 渲染程序题 (PV Operations)
+        function renderPrograms() {
+            const container = document.getElementById('programs-box');
+            container.innerHTML = '';
+
+            programsData.forEach((q, idx) => {
+                const card = document.createElement('div');
+                card.className = "bg-slate-50 p-6 rounded-2xl border border-slate-200/60 space-y-4";
+                
+                let inputField = '';
+                if(currentMode === 'browse') {
+                    inputField = `
+                        <div class="bg-emerald-50 border border-emerald-200 p-4 rounded-xl text-xs space-y-2">
+                            <span class="text-emerald-800 font-bold">标准答案对照：</span>
+                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 font-mono text-emerald-700">
+                                ${q.ans.map((a, ai) => `<div>____${ai+1}____: <b>${a}</b></div>`).join('')}
+                            </div>
+                            <p class="text-[11px] text-slate-500 mt-2">💡 <b>题目解析：</b>${q.explanation}</p>
+                        </div>
+                    `;
+                } else {
+                    inputField = `
+                        <div class="bg-white p-4 rounded-xl border border-slate-200 space-y-3">
+                            <span class="text-xs font-bold text-slate-700">请输入 1 ~ 8 数字代号自测：</span>
+                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                                ${q.ans.map((a, ai) => `
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-xs text-slate-400 font-mono">____${ai+1}____:</span>
+                                        <input type="text" id="pv-ans-${q.id}-${ai}" class="pv-input border border-slate-300 w-16 text-center text-xs py-1 rounded-md focus:border-emerald-500 focus:outline-none" maxLength="1">
+                                    </div>
+                                `).join('')}
+                            </div>
+                            <div id="pv-feedback-${q.id}" class="text-xs font-bold hidden p-3 rounded-lg"></div>
+                        </div>
+                    `;
+                }
+
+                card.innerHTML = `
+                    <div class="flex items-center justify-between border-b border-slate-200/60 pb-3">
+                        <h3 class="text-sm font-bold text-slate-800 flex items-center gap-2">
+                            <span class="bg-emerald-500 text-slate-950 w-5 h-5 rounded-full flex items-center justify-center text-xs font-black">${idx+1}</span>
+                            <span>${q.title}</span>
+                        </h3>
+                        <span class="text-xs text-slate-400 font-mono">Q${q.id}</span>
+                    </div>
+                    <p class="text-xs text-slate-600 leading-relaxed">${q.desc}</p>
+                    <p class="text-[11px] bg-slate-100 text-slate-500 p-2 rounded-lg font-mono border">${q.guide}</p>
+                    <pre class="bg-slate-900 text-emerald-400 p-4 rounded-xl text-xs font-mono overflow-x-auto border border-slate-950">${q.code}</pre>
+                    ${inputField}
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // 4. 渲染问答计算题 (Questions)
+        function renderQuestions() {
+            const container = document.getElementById('questions-box');
+            container.innerHTML = '';
+
+            questionsData.forEach((q, idx) => {
+                const card = document.createElement('div');
+                card.className = "bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4 relative";
+                
+                let mathFields = '';
+                if(currentMode === 'browse') {
+                    mathFields = `
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 text-xs font-mono">
+                            ${q.blanks.map(b => `
+                                <div class="bg-emerald-50 border border-emerald-100 p-2 rounded-lg text-emerald-800 flex justify-between items-center">
+                                    <span>${b.label}:</span>
+                                    <span class="font-bold bg-emerald-200/50 px-2 py-0.5 rounded text-emerald-900">${b.ans}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded-xl text-[11px] text-slate-500 leading-relaxed border space-y-1">
+                            <div class="font-bold text-slate-700">✍️ 标准手写计算与推导过程：</div>
+                            <div>${q.explanation}</div>
+                            <div class="text-[10px] text-emerald-600 font-bold mt-1">※ 此题原本无答案，由 AI 为您严密推导并给出 [AI计算答案]。</div>
+                        </div>
+                    `;
+                } else {
+                    mathFields = `
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 text-xs">
+                            ${q.blanks.map((b, bi) => `
+                                <div class="flex items-center gap-2 bg-slate-50 p-2 rounded-lg border border-slate-200">
+                                    <span class="text-slate-500">${b.label}:</span>
+                                    <input type="text" id="math-ans-${q.id}-${bi}" class="math-input border-b border-slate-300 w-24 text-center text-xs py-0.5 focus:border-emerald-500 focus:outline-none bg-transparent" placeholder="自测">
+                                </div>
+                            `).join('')}
+                        </div>
+                        <div id="math-feedback-${q.id}" class="text-xs font-bold hidden p-3 rounded-lg space-y-2"></div>
+                    `;
+                }
+
+                card.innerHTML = `
+                    <div class="flex items-center justify-between border-b pb-2">
+                        <h3 class="text-sm font-bold text-slate-800 flex items-center gap-2">
+                            <span class="text-emerald-500 font-mono">问答题 #${idx+1}</span>
+                            <span>${q.title}</span>
+                        </h3>
+                        <span class="text-xs font-mono text-slate-400">Q${q.id}</span>
+                    </div>
+                    <div class="text-xs text-slate-600 leading-relaxed bg-slate-50/50 p-3 rounded-xl border border-dashed border-slate-200">${q.desc}</div>
+                    ${mathFields}
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // 5. 渲染简答题 (Essays)
+        function renderEssays() {
+            const container = document.getElementById('essays-box');
+            container.innerHTML = '';
+
+            essaysData.forEach((q, idx) => {
+                const div = document.createElement('div');
+                div.className = "p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-3";
+                
+                let txtArea = '';
+                if(currentMode === 'browse') {
+                    txtArea = `
+                        <div class="bg-white p-4 rounded-xl border border-slate-200 text-xs text-slate-600 leading-relaxed space-y-1">
+                            <div class="font-bold text-emerald-800 flex items-center gap-1.5 mb-1">
+                                🔑 考点标准采分核心要点：
+                            </div>
+                            <div>${q.a}</div>
+                        </div>
+                    `;
+                } else {
+                    txtArea = `
+                        <textarea id="essay-ans-${q.id}" rows="3" class="essay-input w-full bg-white border border-slate-300 rounded-xl p-3 text-xs focus:outline-none focus:border-emerald-500 transition" placeholder="在此处键入您的解答思路（手写模拟自测）..."></textarea>
+                        <div id="essay-feedback-${q.id}" class="hidden bg-emerald-50 border border-emerald-100 p-4 rounded-xl text-xs space-y-1">
+                            <div class="font-bold text-emerald-800">标准核心要点（对照自我给分）：</div>
+                            <div class="text-slate-600">${q.a}</div>
+                        </div>
+                    `;
+                }
+
+                div.innerHTML = `
+                    <h3 class="text-sm font-bold text-slate-800 flex items-start gap-2">
+                        <span class="text-emerald-500 font-mono shrink-0">简答题 ${q.id}.</span>
+                        <span>${q.q}</span>
+                    </h3>
+                    ${txtArea}
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        // 单题型提交批改
+        function gradeSection(sectionId) {
+            if(currentMode === 'browse') {
+                alert("您正处于「背诵模式」，标准参考答案已全部列出。请切换至「自测模式」体验模拟判卷！");
+                return;
+            }
+
+            if(sectionId === 'choices') {
+                let corrects = 0, totals = 0;
+                choicesData.forEach(q => {
+                    totals++;
+                    const select = document.getElementById(`choice-ans-${q.id}`);
+                    const feedback = document.getElementById(`choice-feedback-${q.id}`);
+                    if(!select || !feedback) return;
+
+                    const val = select.value.trim().toUpperCase();
+                    if(val === q.ans) {
+                        corrects++;
+                        select.className = "choice-input border-2 border-emerald-500 rounded-lg px-2 py-1 text-xs bg-emerald-50 text-emerald-950 ml-2";
+                        feedback.innerHTML = "✅";
+                        feedback.className = "ml-2 text-xs font-bold text-emerald-600";
+                    } else {
+                        select.className = "choice-input border-2 border-red-500 rounded-lg px-2 py-1 text-xs bg-red-50 text-red-950 ml-2";
+                        feedback.innerHTML = `❌ (答案: ${q.ans})`;
+                        feedback.className = "ml-2 text-xs font-bold text-red-500";
+                    }
+                });
+                alert(`选择题批改成功！得分：${corrects}/${totals}，正确率：${Math.round((corrects/totals)*100)}%！`);
+                updateScores();
+
+            } else if(sectionId === 'blanks') {
+                let corrects = 0, totals = 0;
+                blanksData.forEach(q => {
+                    let qCorrect = true;
+                    q.ans.forEach((a, aIdx) => {
+                        totals++;
+                        const input = document.getElementById(`blank-ans-${q.id}-${aIdx}`);
+                        if(!input) return;
+
+                        const val = input.value.trim();
+                        // 模糊拼写比对 (去掉空格，进行包含或相近验证)
+                        if(val === a || a.split('、').includes(val) || (val.length > 0 && a.replace(/\s+/g, '').includes(val.replace(/\s+/g, '')))) {
+                            corrects++;
+                            input.className = "blank-input border-2 border-emerald-500 w-28 text-center text-xs py-0.5 mx-1 bg-emerald-50 text-emerald-900 rounded-md";
+                        } else {
+                            qCorrect = false;
+                            input.className = "blank-input border-2 border-red-500 w-28 text-center text-xs py-0.5 mx-1 bg-red-50 text-red-900 rounded-md";
+                        }
+                    });
+
+                    const feedback = document.getElementById(`blank-feedback-${q.id}`);
+                    if(feedback) {
+                        if(qCorrect) {
+                            feedback.innerHTML = "✅ 正确";
+                            feedback.className = "ml-2 text-xs font-bold text-emerald-600";
+                        } else {
+                            feedback.innerHTML = `❌ (标准答案: ${q.ans.join(' / ')})`;
+                            feedback.className = "ml-2 text-xs font-bold text-red-500";
+                        }
+                    }
+                });
+                alert(`填空题批改完毕！得分已同步更新至看板。`);
+                updateScores();
+
+            } else if(sectionId === 'programs') {
+                let corrects = 0, totals = 0;
+                programsData.forEach(q => {
+                    let sCorrect = true;
+                    q.ans.forEach((a, ai) => {
+                        totals++;
+                        const input = document.getElementById(`pv-ans-${q.id}-${ai}`);
+                        if(!input) return;
+
+                        const val = input.value.trim();
+                        if(val === a) {
+                            corrects++;
+                            input.className = "pv-input border-2 border-emerald-500 w-16 text-center text-xs py-1 rounded-md bg-emerald-50 text-emerald-900";
+                        } else {
+                            sCorrect = false;
+                            input.className = "pv-input border-2 border-red-500 w-16 text-center text-xs py-1 rounded-md bg-red-50 text-red-900";
+                        }
+                    });
+
+                    const feedback = document.getElementById(`pv-feedback-${q.id}`);
+                    if(feedback) {
+                        feedback.classList.remove('hidden');
+                        if(sCorrect) {
+                            feedback.className = "text-xs font-bold p-3 rounded-lg bg-emerald-50 text-emerald-800";
+                            feedback.innerHTML = `✅ 完全正确！标准解析: ${q.explanation}`;
+                        } else {
+                            feedback.className = "text-xs font-bold p-3 rounded-lg bg-red-50 text-red-800";
+                            feedback.innerHTML = `❌ PV原语配置有误。<br><b>标准答案：</b>${q.ans.map((ans, idx) => `____${idx+1}____: <b>${ans}</b>`).join(' &nbsp; ')}<br><b>💡 标准解析：</b>${q.explanation}`;
+                        }
+                    }
+                });
+                alert(`程序题（PV控制）检测完毕，结果已在题目下方生成！`);
+                updateScores();
+
+            } else if(sectionId === 'questions') {
+                let corrects = 0, totals = 0;
+                questionsData.forEach(q => {
+                    let sCorrect = true;
+                    q.blanks.forEach((b, bi) => {
+                        totals++;
+                        const input = document.getElementById(`math-ans-${q.id}-${bi}`);
+                        if(!input) return;
+
+                        const val = input.value.trim().toUpperCase().replace(/\s+/g, '');
+                        const standardAns = b.ans.toUpperCase().replace(/\s+/g, '');
+                        
+                        // 兼容常见表示格式，支持模糊通过
+                        if(val === standardAns || standardAns.includes(val) && val.length > 0) {
+                            corrects++;
+                            input.className = "math-input border-2 border-emerald-500 w-24 text-center text-xs py-0.5 bg-emerald-50 text-emerald-900 rounded-md";
+                        } else {
+                            sCorrect = false;
+                            input.className = "math-input border-2 border-red-500 w-24 text-center text-xs py-0.5 bg-red-50 text-red-900 rounded-md";
+                        }
+                    });
+
+                    const feedback = document.getElementById(`math-feedback-${q.id}`);
+                    if(feedback) {
+                        feedback.classList.remove('hidden');
+                        if(sCorrect) {
+                            feedback.className = "text-xs font-bold p-3 rounded-lg bg-emerald-50 text-emerald-800 space-y-1 border border-emerald-200";
+                            feedback.innerHTML = `<div>✅ 算法比对完美吻合！</div><div>${q.explanation}</div>`;
+                        } else {
+                            feedback.className = "text-xs font-bold p-3 rounded-lg bg-red-50 text-red-800 space-y-1 border border-red-200";
+                            feedback.innerHTML = `<div>❌ 计算结果存在差异。</div><div class="text-[11px] font-mono">官方标准值：${q.blanks.map(b => `[${b.label}: ${b.ans}]`).join(' ')}</div><div class="mt-2"><b>✍️ 手写推导过程：</b>${q.explanation}</div>`;
+                        }
+                    }
+                });
+                alert(`问答算法大题计算结果已判卷完成，解析均已在下方开启！`);
+                updateScores();
+
+            } else if(sectionId === 'essays') {
+                essaysData.forEach(q => {
+                    const feedback = document.getElementById(`essay-feedback-${q.id}`);
+                    if(feedback) feedback.classList.remove('hidden');
+                });
+                alert("已经为您调出了 10 道操作系统最常考简答题的「标准官方采分点大纲」，请仔细比对自评。");
+            }
+        }
+
+        // 整卷一键自测提交
+        function submitAllAnswers() {
+            if(currentMode === 'browse') {
+                alert("当前处于背诵模式。请切换为自测模式后，再进行整卷模拟答卷提交。");
+                return;
+            }
+            gradeSection('choices');
+            gradeSection('blanks');
+            gradeSection('programs');
+            gradeSection('questions');
+            gradeSection('essays');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // 统一更新左侧统计看板
+        function updateScores() {
+            if(currentMode === 'browse') {
+                document.getElementById('stat-answered').innerText = "答案公开";
+                document.getElementById('stat-accuracy').innerText = "背诵中";
+                document.getElementById('stat-accuracy').className = "text-lg font-bold text-amber-600";
+                return;
+            }
+
+            let total = 0, answered = 0, correct = 0;
+
+            const choiceInputs = document.querySelectorAll('.choice-input');
+            const blankInputs = document.querySelectorAll('.blank-input');
+            const pvInputs = document.querySelectorAll('.pv-input');
+            const mathInputs = document.querySelectorAll('.math-input');
+
+            choiceInputs.forEach(i => { total++; if(i.value !== "") answered++; });
+            blankInputs.forEach(i => { total++; if(i.value !== "") answered++; });
+            pvInputs.forEach(i => { total++; if(i.value !== "") answered++; });
+            mathInputs.forEach(i => { total++; if(i.value !== "") answered++; });
+
+            document.getElementById('stat-answered').innerText = `${answered}/${total}`;
+
+            // 计算所有正确判定的绿色输入框数量
+            const gChoice = document.querySelectorAll('.choice-input.border-emerald-500');
+            const gBlank = document.querySelectorAll('.blank-input.border-emerald-500');
+            const gPV = document.querySelectorAll('.pv-input.border-emerald-500');
+            const gMath = document.querySelectorAll('.math-input.border-emerald-500');
+
+            correct = gChoice.length + gBlank.length + gPV.length + gMath.length;
+            const rate = answered > 0 ? Math.round((correct / answered) * 100) : 0;
+            
+            document.getElementById('stat-accuracy').innerText = `${rate}%`;
+            if(rate > 80) {
+                document.getElementById('stat-accuracy').className = "text-lg font-bold text-emerald-600";
+            } else if(rate > 50) {
+                document.getElementById('stat-accuracy').className = "text-lg font-bold text-amber-500";
+            } else {
+                document.getElementById('stat-accuracy').className = "text-lg font-bold text-red-500";
+            }
+        }
+
+        // 首次装载完毕执行自测模式
+        window.onload = function() {
+            setMode('test');
+        }
+    </script>
+</body>
+</html>
