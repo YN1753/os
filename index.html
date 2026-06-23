@@ -74,13 +74,6 @@
             
             <!-- 工具控制区 -->
             <div class="flex flex-wrap items-center gap-3">
-                <div class="bg-slate-800 px-3 py-1.5 rounded-xl border border-slate-700 text-xs flex items-center gap-4">
-                    <span class="text-slate-400">复习模式:</span>
-                    <div class="flex gap-2">
-                        <button onclick="setMode('browse')" id="mode-browse-btn" class="px-2.5 py-1 rounded-md font-bold transition text-slate-400 hover:text-white">📖 背诵模式</button>
-                        <button onclick="setMode('test')" id="mode-test-btn" class="px-2.5 py-1 rounded-md font-bold transition bg-slate-700 text-white">📝 自测模式</button>
-                    </div>
-                </div>
                 <button onclick="submitAllAnswers()" class="bg-emerald-500 hover:bg-emerald-600 text-slate-950 px-4 py-2 rounded-xl text-xs font-bold shadow-md transition">
                     ✔️ 提交整卷自测
                 </button>
@@ -140,11 +133,17 @@
             
             <!-- 1. 选择题专区 -->
             <section id="sec-choices" class="space-y-6">
-                <div class="border-b border-slate-100 pb-4">
-                    <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
-                        <span class="text-emerald-500">一、</span>单项选择题专区
-                    </h2>
-                    <p class="text-xs text-slate-500 mt-1">共有 78 道操作系统核心概念单项选择题，答案已全部严密核对。</p>
+                <div class="border-b border-slate-100 pb-4 flex flex-col sm:flex-row sm:items-end justify-between gap-3">
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+                            <span class="text-emerald-500">一、</span>单项选择题专区
+                        </h2>
+                        <p class="text-xs text-slate-500 mt-1">共有 78 道操作系统核心概念单项选择题，答案已全部严密核对。</p>
+                    </div>
+                    <div class="bg-slate-800 px-2.5 py-1 rounded-lg border border-slate-700 text-xs flex items-center gap-2 shrink-0 no-print">
+                        <button onclick="setSectionMode('choices','browse')" id="mode-browse-choices" class="px-2 py-0.5 rounded-md font-bold transition text-[11px] text-slate-400 hover:text-white">📖 背诵</button>
+                        <button onclick="setSectionMode('choices','test')" id="mode-test-choices" class="px-2 py-0.5 rounded-md font-bold transition text-[11px] bg-slate-700 text-white">📝 自测</button>
+                    </div>
                 </div>
                 <div id="choices-box" class="space-y-6">
                     <!-- JS 渲染选择题 -->
@@ -158,11 +157,17 @@
 
             <!-- 2. 填空题专区 -->
             <section id="sec-blanks" class="space-y-6">
-                <div class="border-b border-slate-100 pb-4">
-                    <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
-                        <span class="text-emerald-500">二、</span>填空题专区
-                    </h2>
-                    <p class="text-xs text-slate-500 mt-1">共有 20 组文字基础性填空题。在填空框中输入您认为正确的专业术语进行测试。</p>
+                <div class="border-b border-slate-100 pb-4 flex flex-col sm:flex-row sm:items-end justify-between gap-3">
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+                            <span class="text-emerald-500">二、</span>填空题专区
+                        </h2>
+                        <p class="text-xs text-slate-500 mt-1">共有 20 组文字基础性填空题。在填空框中输入您认为正确的专业术语进行测试。</p>
+                    </div>
+                    <div class="bg-slate-800 px-2.5 py-1 rounded-lg border border-slate-700 text-xs flex items-center gap-2 shrink-0 no-print">
+                        <button onclick="setSectionMode('blanks','browse')" id="mode-browse-blanks" class="px-2 py-0.5 rounded-md font-bold transition text-[11px] text-slate-400 hover:text-white">📖 背诵</button>
+                        <button onclick="setSectionMode('blanks','test')" id="mode-test-blanks" class="px-2 py-0.5 rounded-md font-bold transition text-[11px] bg-slate-700 text-white">📝 自测</button>
+                    </div>
                 </div>
                 <div id="blanks-box" class="space-y-6">
                     <!-- JS 渲染填空题 -->
@@ -176,11 +181,17 @@
 
             <!-- 3. 程序题专区 -->
             <section id="sec-programs" class="space-y-6">
-                <div class="border-b border-slate-100 pb-4">
-                    <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
-                        <span class="text-emerald-500">三、</span>程序题专区 (经典 PV 互斥同步伪代码)
-                    </h2>
-                    <p class="text-xs text-slate-500 mt-1">包含期末原卷中 7 大经典的 PV 同步控制伪代码大题。通过输入 1~8 的原语代号来进行自测。</p>
+                <div class="border-b border-slate-100 pb-4 flex flex-col sm:flex-row sm:items-end justify-between gap-3">
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+                            <span class="text-emerald-500">三、</span>程序题专区 (经典 PV 互斥同步伪代码)
+                        </h2>
+                        <p class="text-xs text-slate-500 mt-1">包含期末原卷中 7 大经典的 PV 同步控制伪代码大题。通过输入 1~8 的原语代号来进行自测。</p>
+                    </div>
+                    <div class="bg-slate-800 px-2.5 py-1 rounded-lg border border-slate-700 text-xs flex items-center gap-2 shrink-0 no-print">
+                        <button onclick="setSectionMode('programs','browse')" id="mode-browse-programs" class="px-2 py-0.5 rounded-md font-bold transition text-[11px] text-slate-400 hover:text-white">📖 背诵</button>
+                        <button onclick="setSectionMode('programs','test')" id="mode-test-programs" class="px-2 py-0.5 rounded-md font-bold transition text-[11px] bg-slate-700 text-white">📝 自测</button>
+                    </div>
                 </div>
                 <div id="programs-box" class="space-y-8">
                     <!-- JS 渲染程序题 -->
@@ -194,11 +205,17 @@
 
             <!-- 4. 问答题专区 -->
             <section id="sec-questions" class="space-y-6">
-                <div class="border-b border-slate-100 pb-4">
-                    <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
-                        <span class="text-emerald-500">四、</span>问答题专区 (核心算法深度分析与计算)
-                    </h2>
-                    <p class="text-xs text-slate-500 mt-1">汇聚进程调度甘特图、银行家安全算法、虚实地址映射、置换算法序列、磁盘磁头移动等所有综合计算大题。原卷中缺失答案的大题，皆已由 AI 精密计算并做标注。</p>
+                <div class="border-b border-slate-100 pb-4 flex flex-col sm:flex-row sm:items-end justify-between gap-3">
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+                            <span class="text-emerald-500">四、</span>问答题专区 (核心算法深度分析与计算)
+                        </h2>
+                        <p class="text-xs text-slate-500 mt-1">汇聚进程调度甘特图、银行家安全算法、虚实地址映射、置换算法序列、磁盘磁头移动等所有综合计算大题。原卷中缺失答案的大题，皆已由 AI 精密计算并做标注。</p>
+                    </div>
+                    <div class="bg-slate-800 px-2.5 py-1 rounded-lg border border-slate-700 text-xs flex items-center gap-2 shrink-0 no-print">
+                        <button onclick="setSectionMode('questions','browse')" id="mode-browse-questions" class="px-2 py-0.5 rounded-md font-bold transition text-[11px] text-slate-400 hover:text-white">📖 背诵</button>
+                        <button onclick="setSectionMode('questions','test')" id="mode-test-questions" class="px-2 py-0.5 rounded-md font-bold transition text-[11px] bg-slate-700 text-white">📝 自测</button>
+                    </div>
                 </div>
                 <div id="questions-box" class="space-y-10">
                     <!-- JS 渲染问答计算题 -->
@@ -212,11 +229,17 @@
 
             <!-- 5. 简答题专区 -->
             <section id="sec-essays" class="space-y-6">
-                <div class="border-b border-slate-100 pb-4">
-                    <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
-                        <span class="text-emerald-500">五、</span>简答题专区 (经典简答大纲背诵)
-                    </h2>
-                    <p class="text-xs text-slate-500 mt-1">10 道期末必背经典简答题。自测模式下可在文本框写下草稿，点击按钮核对采分点大纲进行自我评估。</p>
+                <div class="border-b border-slate-100 pb-4 flex flex-col sm:flex-row sm:items-end justify-between gap-3">
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+                            <span class="text-emerald-500">五、</span>简答题专区 (经典简答大纲背诵)
+                        </h2>
+                        <p class="text-xs text-slate-500 mt-1">10 道期末必背经典简答题。自测模式下可在文本框写下草稿，点击按钮核对采分点大纲进行自我评估。</p>
+                    </div>
+                    <div class="bg-slate-800 px-2.5 py-1 rounded-lg border border-slate-700 text-xs flex items-center gap-2 shrink-0 no-print">
+                        <button onclick="setSectionMode('essays','browse')" id="mode-browse-essays" class="px-2 py-0.5 rounded-md font-bold transition text-[11px] text-slate-400 hover:text-white">📖 背诵</button>
+                        <button onclick="setSectionMode('essays','test')" id="mode-test-essays" class="px-2 py-0.5 rounded-md font-bold transition text-[11px] bg-slate-700 text-white">📝 自测</button>
+                    </div>
                 </div>
                 <div id="essays-box" class="space-y-6">
                     <!-- JS 渲染简答题 -->
@@ -836,21 +859,25 @@ PC() {
             { id: 10, q: "10、简述抢占式调度与非抢占式调度的区别。", a: "• <b>非抢占式调度：</b>一旦把处理机分配给某进程，它就一直运行下去，直到该进程完成或因发生某事件而阻塞，系统<b>绝不强行收回</b>处理机。<br>• <b>抢占式调度：</b>允许调度程序根据某种原则（如优先权或时间片），去<b>强行暂停</b>正在执行的进程，将处理机重新分配给另一个更紧迫的进程。" }
         ];
 
-        let currentMode = 'test'; // 默认是空白自测模式 'test'
+        // 每节独立模式控制
+        let sectionModes = { choices: 'test', blanks: 'test', programs: 'test', questions: 'test', essays: 'test' };
 
-        // 切换背诵/自测模式
-        function setMode(mode) {
-            currentMode = mode;
-            const bBtn = document.getElementById('mode-browse-btn');
-            const tBtn = document.getElementById('mode-test-btn');
+        function setSectionMode(section, mode) {
+            sectionModes[section] = mode;
+            const bBtn = document.getElementById(`mode-browse-${section}`);
+            const tBtn = document.getElementById(`mode-test-${section}`);
             if(mode === 'browse') {
-                bBtn.className = "px-2.5 py-1 rounded-md font-bold transition bg-slate-700 text-white";
-                tBtn.className = "px-2.5 py-1 rounded-md font-bold transition text-slate-400 hover:text-white";
+                bBtn.className = "px-2 py-0.5 rounded-md font-bold transition text-[11px] bg-slate-700 text-white";
+                tBtn.className = "px-2 py-0.5 rounded-md font-bold transition text-[11px] text-slate-400 hover:text-white";
             } else {
-                tBtn.className = "px-2.5 py-1 rounded-md font-bold transition bg-slate-700 text-white";
-                bBtn.className = "px-2.5 py-1 rounded-md font-bold transition text-slate-400 hover:text-white";
+                tBtn.className = "px-2 py-0.5 rounded-md font-bold transition text-[11px] bg-slate-700 text-white";
+                bBtn.className = "px-2 py-0.5 rounded-md font-bold transition text-[11px] text-slate-400 hover:text-white";
             }
-            renderAll();
+            if(section === 'choices') renderChoices();
+            else if(section === 'blanks') renderBlanks();
+            else if(section === 'programs') renderPrograms();
+            else if(section === 'questions') renderQuestions();
+            else if(section === 'essays') renderEssays();
             updateScores();
         }
 
@@ -873,7 +900,7 @@ PC() {
                 div.className = "p-4 rounded-xl border border-slate-100 hover:bg-slate-50/50 transition flex flex-col gap-2.5";
                 
                 let answerArea = '';
-                if(currentMode === 'browse') {
+                if(sectionModes.choices === 'browse') {
                     answerArea = `<span class="ml-2 font-mono font-bold text-emerald-600 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-md text-xs">标准答案: ${q.ans}</span>`;
                 } else {
                     answerArea = `
@@ -913,7 +940,7 @@ PC() {
                 div.className = "p-4 rounded-xl border border-slate-100 hover:bg-slate-50/50 transition";
                 
                 let blankFields = '';
-                if(currentMode === 'browse') {
+                if(sectionModes.blanks === 'browse') {
                     blankFields = q.ans.map(a => `<span class="mx-1 px-2.5 py-0.5 bg-emerald-50 border border-emerald-200 text-emerald-700 font-bold rounded-md font-mono text-xs">${a}</span>`).join('、');
                 } else {
                     blankFields = q.ans.map((a, aIdx) => `
@@ -944,7 +971,7 @@ PC() {
                 card.className = "bg-slate-50 p-6 rounded-2xl border border-slate-200/60 space-y-4";
                 
                 let inputField = '';
-                if(currentMode === 'browse') {
+                if(sectionModes.programs === 'browse') {
                     inputField = `
                         <div class="bg-emerald-50 border border-emerald-200 p-4 rounded-xl text-xs space-y-2">
                             <span class="text-emerald-800 font-bold">标准答案对照：</span>
@@ -998,7 +1025,7 @@ PC() {
                 card.className = "bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4 relative";
                 
                 let mathFields = '';
-                if(currentMode === 'browse') {
+                if(sectionModes.questions === 'browse') {
                     mathFields = `
                         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 text-xs font-mono">
                             ${q.blanks.map(b => `
@@ -1053,7 +1080,7 @@ PC() {
                 div.className = "p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-3";
                 
                 let txtArea = '';
-                if(currentMode === 'browse') {
+                if(sectionModes.essays === 'browse') {
                     txtArea = `
                         <div class="bg-white p-4 rounded-xl border border-slate-200 text-xs text-slate-600 leading-relaxed space-y-1">
                             <div class="font-bold text-emerald-800 flex items-center gap-1.5 mb-1">
@@ -1085,8 +1112,8 @@ PC() {
 
         // 单题型提交批改
         function gradeSection(sectionId) {
-            if(currentMode === 'browse') {
-                alert("您正处于「背诵模式」，标准参考答案已全部列出。请切换至「自测模式」体验模拟判卷！");
+            if(sectionModes[sectionId] === 'browse') {
+                alert("该节当前处于「背诵模式」，标准参考答案已全部列出。请切换至「自测模式」体验模拟判卷！");
                 return;
             }
 
@@ -1229,8 +1256,9 @@ PC() {
 
         // 整卷一键自测提交
         function submitAllAnswers() {
-            if(currentMode === 'browse') {
-                alert("当前处于背诵模式。请切换为自测模式后，再进行整卷模拟答卷提交。");
+            const allBrowse = Object.values(sectionModes).every(m => m === 'browse');
+            if(allBrowse) {
+                alert("所有节均处于背诵模式。请将至少一节切换为自测模式后，再进行整卷模拟答卷提交。");
                 return;
             }
             gradeSection('choices');
@@ -1243,7 +1271,8 @@ PC() {
 
         // 统一更新左侧统计看板
         function updateScores() {
-            if(currentMode === 'browse') {
+            const allBrowse = Object.values(sectionModes).every(m => m === 'browse');
+            if(allBrowse) {
                 document.getElementById('stat-answered').innerText = "答案公开";
                 document.getElementById('stat-accuracy').innerText = "背诵中";
                 document.getElementById('stat-accuracy').className = "text-lg font-bold text-amber-600";
@@ -1252,27 +1281,27 @@ PC() {
 
             let total = 0, answered = 0, correct = 0;
 
-            const choiceInputs = document.querySelectorAll('.choice-input');
-            const blankInputs = document.querySelectorAll('.blank-input');
-            const pvInputs = document.querySelectorAll('.pv-input');
-            const mathInputs = document.querySelectorAll('.math-input');
-
-            choiceInputs.forEach(i => { total++; if(i.value !== "") answered++; });
-            blankInputs.forEach(i => { total++; if(i.value !== "") answered++; });
-            pvInputs.forEach(i => { total++; if(i.value !== "") answered++; });
-            mathInputs.forEach(i => { total++; if(i.value !== "") answered++; });
+            if(sectionModes.choices === 'test') {
+                document.querySelectorAll('.choice-input').forEach(i => { total++; if(i.value !== "") answered++; });
+                document.querySelectorAll('.choice-input.border-emerald-500').forEach(() => correct++);
+            }
+            if(sectionModes.blanks === 'test') {
+                document.querySelectorAll('.blank-input').forEach(i => { total++; if(i.value !== "") answered++; });
+                document.querySelectorAll('.blank-input.border-emerald-500').forEach(() => correct++);
+            }
+            if(sectionModes.programs === 'test') {
+                document.querySelectorAll('.pv-input').forEach(i => { total++; if(i.value !== "") answered++; });
+                document.querySelectorAll('.pv-input.border-emerald-500').forEach(() => correct++);
+            }
+            if(sectionModes.questions === 'test') {
+                document.querySelectorAll('.math-input').forEach(i => { total++; if(i.value !== "") answered++; });
+                document.querySelectorAll('.math-input.border-emerald-500').forEach(() => correct++);
+            }
 
             document.getElementById('stat-answered').innerText = `${answered}/${total}`;
 
-            // 计算所有正确判定的绿色输入框数量
-            const gChoice = document.querySelectorAll('.choice-input.border-emerald-500');
-            const gBlank = document.querySelectorAll('.blank-input.border-emerald-500');
-            const gPV = document.querySelectorAll('.pv-input.border-emerald-500');
-            const gMath = document.querySelectorAll('.math-input.border-emerald-500');
-
-            correct = gChoice.length + gBlank.length + gPV.length + gMath.length;
             const rate = answered > 0 ? Math.round((correct / answered) * 100) : 0;
-            
+
             document.getElementById('stat-accuracy').innerText = `${rate}%`;
             if(rate > 80) {
                 document.getElementById('stat-accuracy').className = "text-lg font-bold text-emerald-600";
@@ -1283,9 +1312,10 @@ PC() {
             }
         }
 
-        // 首次装载完毕执行自测模式
+        // 首次装载完毕渲染所有节
         window.onload = function() {
-            setMode('test');
+            renderAll();
+            updateScores();
         }
     </script>
 </body>
